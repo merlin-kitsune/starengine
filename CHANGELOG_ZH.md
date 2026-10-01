@@ -3,7 +3,35 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.6）
+## 未发布（2.0.0-SNAPSHOT.7）
+
+### 修复
+
+- **`event/EventTargetCollector` 的 FTB Teams / OPAC 两处反射**目标**根本不存在**（2026-10-01 自 `main` 线 `1.0.6` 移植到本快照线）：
+  这两个后端此前**恒为未启用且毫无声响** —— 最外层 `catch (Exception ignored)` 把
+  `NoSuchMethodException` / `ClassNotFoundException` 全部吞掉。后果：装了 FTB Teams 或 OPAC 的玩家
+  被本库判为「没有任何队伍」⇒ 落进「全服皆友方」兜底 ⇒ **队友判定整体失效**（消费方表现为
+  「同队内仍能互相造成伤害 / 电磁炮仍命中友方 / 友方效果扩散到全服」）。按上游实物逐条更正：
+  - FTB 的四个管理器访问器声明在**嵌套接口** `FTBTeamsAPI$API` 上 —— 不在外层类上，
+    而 `Class#getMethod` **不会**跨到嵌套接口；
+  - 服务端取队伍的真实签名是 `TeamManager#getTeamForPlayerID(UUID)`；原代码查的
+    `getTeamForPlayer(UUID)` / `getTeamForPlayer(Player)` **一个都不存在**；
+  - 客户端取队伍是 `ClientTeamManager#getKnownPlayer(UUID)` + `KnownClientPlayer#teamId()`
+    （record 访问器，**没有 get 前缀**）+ `getTeamByID(UUID)`；
+  - OPAC 的包路径真实为 **`xaero.pac.*`**（原代码查的 `dev.darkhax.opac.*` **整条不存在**）：
+    入口链 = `OpenPACServerAPI.get(MinecraftServer)` → `getPartyManager()` →
+    `IPartyManagerAPI#getPartyByMember(UUID)`；成员走 `IServerPartyAPI#getOnlineMemberStream()`
+    （回退 `getMemberInfoStream()` + `IPartyMemberAPI#getUUID()`）；
+  - `hasAnyTeam` 的 FTB 判据由「Team 对象非空」改为 `isPartyTeam() || isServerTeam()`
+    —— FTB 给每个玩家都建了个人队伍 ⇒ 旧判据恒真，把「未组队 ⇒ 作用于全服」的兜底堵死；
+  - 解析失败不再静默：新增 `describeBackends()` 打 `AP_LIB_PARTY:` 机器行
+    （「没装」记 debug、「装了但签名不符」记 warn）；
+  - 客户端路径 / 成员访问器 / 存在性判据按**可选**解析：缺失只降精度；
+    客户端分支显式判空返回 `null`，避免一次客户端调用把**服务端**判定一起 disable。
+
+- **版本**：改动落在三平台共用的 `common` 源码 ⇒ 三个 artifact 同批换号 `2.0.0-SNAPSHOT.6` → **`2.0.0-SNAPSHOT.7`**。
+  公共 API 只增不减（`collectTeamPlayers` / `hasAnyTeam` 的签名与语义不变，仅新增
+  `describeBackends()` 与 `BACKEND_REPORT_PREFIX`）。
 
 ### 战斗
 

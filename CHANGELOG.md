@@ -3,7 +3,41 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.6)
+## Unreleased (2.0.0-SNAPSHOT.7)
+
+### Fixes
+
+- **`event/EventTargetCollector`: both the FTB Teams and the OPAC reflection targets did not exist at all**
+  (ported to this snapshot line from the `main` line's `1.0.6` on 2026-10-01): the two backends were
+  **permanently disabled and completely silent** - the outermost `catch (Exception ignored)` swallowed every
+  `NoSuchMethodException` / `ClassNotFoundException`. Consequence: players running FTB Teams or OPAC were
+  reported as "in no team at all", fell through to the "no team => everyone is friendly" fallback, and
+  **party detection failed across the board** (consumers saw "same-team players can still hurt each other /
+  the railgun still hits allies / friendly-only effects spread to the whole server"). Corrected one by one
+  against the real upstream artifacts:
+  - FTB's four manager accessors live on the **nested interface** `FTBTeamsAPI$API`, not on the outer class -
+    and `Class#getMethod` **does not** cross into nested interfaces;
+  - the real server-side signature is `TeamManager#getTeamForPlayerID(UUID)`; the previously probed
+    `getTeamForPlayer(UUID)` / `getTeamForPlayer(Player)` **do not exist**;
+  - the client-side entry point is `ClientTeamManager#getKnownPlayer(UUID)` + `KnownClientPlayer#teamId()`
+    (a record accessor, **no get prefix**) + `getTeamByID(UUID)`;
+  - OPAC's real package path is **`xaero.pac.*`** (the previously probed `dev.darkhax.opac.*` **does not exist
+    at all**): entry chain = `OpenPACServerAPI.get(MinecraftServer)` -> `getPartyManager()` ->
+    `IPartyManagerAPI#getPartyByMember(UUID)`; members come from `IServerPartyAPI#getOnlineMemberStream()`
+    (falling back to `getMemberInfoStream()` + `IPartyMemberAPI#getUUID()`);
+  - `hasAnyTeam`'s FTB criterion changed from "a Team object is present" to `isPartyTeam() || isServerTeam()`
+    - FTB gives every player a personal team, so the old criterion was always true and blocked the
+    "no team => no restriction" fallback;
+  - resolution failures are no longer silent: a new `describeBackends()` prints an `AP_LIB_PARTY:` machine line
+    (debug when simply not installed, warn when installed but with mismatched signatures);
+  - client path / member accessors / existence checks are resolved **optionally**: a missing one only lowers
+    precision; the client branch explicitly returns `null` so that one client-side call cannot disable the
+    **server-side** decision as well.
+
+- **Version**: the change lands in the `common` sources shared by all three platforms, so all three artifacts
+  move together: `2.0.0-SNAPSHOT.6` -> **`2.0.0-SNAPSHOT.7`**. The public API only grows
+  (`collectTeamPlayers` / `hasAnyTeam` keep their signatures and semantics; only `describeBackends()` and
+  `BACKEND_REPORT_PREFIX` are new).
 
 ### Combat
 
