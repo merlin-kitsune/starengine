@@ -1,13 +1,14 @@
 // StarEngine-Lib(星引擎库)多加载器单仓根设置
 //
 // 结构说明(与消费方 astral_dice_multiloader 同构,但多了 common 共享源码目录):
-//   - 本项目跨 MC 版本(1.21.1 NeoForge / 1.20.1 Forge / 26.1.2 NeoForge),各侧 API 差异大,
+//   - 本项目跨 MC 版本(1.21.1 NeoForge / 1.20.1 Forge / 26.1.2 NeoForge / 1.20.1 Fabric),各侧 API 差异大,
 //     因此**不**做单一 common 子项目产出,而是:
 //       common/src/main/java   ← 共享源码目录(不是 Gradle 子项目),被各平台各编译一次
 //       neoforge-1.21.1        ← 平台子项目:Java 21 + Mojmap + ModDevGradle
 //       forge-1.20.1           ← 平台子项目:Java 17 + SRG(reobf) + ModDevGradle Legacy
 //       neoforge-26.1.2        ← 平台子项目:Java 25 + Mojmap(无 Parchment)+ ModDevGradle
-//   - 关键约束:common 源码只能使用「三个 MC 版本都存在且签名一致」的 API。
+//       fabric-1.20.1          ← 平台子项目:Java 17 + Mojmap + Fabric Loom(2026-10-01 并入本线)
+//   - 关键约束:common 源码只能使用「四个 MC 版本都存在且签名一致」的 API。
 //     任何版本分歧(如 DeltaTracker / float partialTick、Holder<MobEffect> / MobEffect、
 //     GuiGraphics / GuiGraphicsExtractor)必须留在平台子项目中,同名类各写一份。
 //   - Java 版本:common 被 Java 17 / 21 / 25 各编译一次,故 common 源码**禁止**使用
@@ -15,6 +16,8 @@
 pluginManagement {
     repositories {
         maven { url = uri('https://maven.neoforged.net/releases') }
+        // Fabric Loom 插件源(2026-10-01:fabric 平台并入本线,与消费方四线口径一致)
+        maven { url = uri('https://maven.fabricmc.net/') }
         gradlePluginPortal()
         mavenCentral()
     }
@@ -29,3 +32,4 @@ rootProject.name = 'starengine_lib'
 include 'neoforge-1.21.1'
 include 'forge-1.20.1'
 include 'neoforge-26.1.2'
+include 'fabric-1.20.1'

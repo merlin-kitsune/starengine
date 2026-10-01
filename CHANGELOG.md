@@ -3,7 +3,16 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.7)
+## Unreleased (2.0.0-SNAPSHOT.8)
+
+### New
+
+- **New Fabric 1.20.1 platform subproject** (2026-10-01): the library now ships for **four platforms** —
+  `neoforge-1.21.1` / `forge-1.20.1` / `neoforge-26.1.2` / **`fabric-1.20.1`**
+  (artifactId `starengine_lib-fabric-1.20.1`), all sharing **one version number**. The Fabric platform
+  contributes 9 platform wiring classes (wallet attachment persistence / rarity extension / Trinkets adapter /
+  event base classes / tags, etc.) with **zero changes** to the shared `common` sources.
+  The consumer `astral_dice`'s `fabric-1.20.1` line now depends on this library.
 
 ### Fixes
 

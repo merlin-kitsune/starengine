@@ -1,0 +1,89 @@
+// StarEngine-Lib / Fabric 1.20.1 平台子项目
+// Java 17 · Mojang 官方映射(officialMojangMappings)· Fabric Loom 1.14.10
+//
+// 源码 = 本子项目 src/main/java(平台专有) + ../../common/src/main/java(共享)
+//
+// 与另三线的关系:common 44 个源文件**零改动**;本平台只提供 9 个平台接线类。
+// 映射选型与消费方 astral_dice 的 fabric-1.20.1 线保持一致(Mojmap)⇒ common 里的
+// 原版成员名在四条线上完全一致,不会有「同一份共享源码在不同平台看到不同名字」的问题。
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'fabric-loom' version '1.14.10'
+}
+
+version = lib_version
+group = mod_group_id
+
+base {
+    archivesName = 'starengine_lib-fabric-1.20.1'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// === 共享源码目录(与另三个平台同一份) ===
+sourceSets.main.java.srcDir(project.file('../common/src/main/java'))
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://api.modrinth.com/maven' }   // Trinkets(Modrinth Maven)
+    // ⚠️ 仅 **编译期** 需要:Trinkets 的 TrinketComponent 继承 CCA 的 ComponentV3(见 dependencies 注释)
+    maven { url = 'https://maven.ladysnake.org/releases' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    // 钱包余额的持久化后端 = **Fabric API 自带的 fabric-data-attachment-api-v1**
+    // (随 fabric-api 分发 ⇒ 不需要任何第三方前置、也不需要额外 maven 源)。
+    // 迁移前这里依赖 Cardinal Components API(dev.onyxstudios.cardinal-components-api) ——
+    // 已按用户裁决移除:附件 API 与 NeoForge 的 AttachmentType 结构 1:1,风险更低且零新增前置。
+    //
+    // ⚠️ 但 CCA **仍在编译期必要**:Trinkets 3.7.2 的 `TrinketComponent extends ComponentV3`
+    //    (javap 实证),解析 `TrinketsApi#getTrinketComponent` 的签名时 javac 必须能加载 CCA 类型。
+    //    ⇒ 用 modCompileOnly(不进运行前置、不写进 fabric.mod.json)。
+    //    运行期 CCA 由 **Trinkets 自己** 声明依赖(其 fabric.mod.json hard-depends
+    //    cardinal-components-base/entity >=3.0.0-0)⇒ 我们不再要求玩家单独装 CCA。
+    modCompileOnly "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+
+    // Trinkets —— **仅编译期**(modCompileOnly),与 Forge 侧 CuriosCompat 的口径完全一致:
+    // 库自身零调用(TrinketsCompat 只是给消费方用的 shim)⇒ 运行期既不需要 Trinkets,
+    // 也不该让本库的 fabric.mod.json 替消费方强制它;调用 TrinketsCompat 的消费方自己声明 trinkets 必需。
+    modCompileOnly "maven.modrinth:trinkets:${trinkets_version}"
+}
+
+// fabric.mod.json 的版本号占位符展开
+// ⚠️ 属性必须在**配置期**取到本地变量:在任务闭包里引用 `project` 会让 Gradle 9 的
+//    configuration cache 失效(execution time 引用脚本对象)。
+def templateProps = [
+        version               : project.version.toString(),
+        loader_version        : project.loader_version.toString(),
+        minecraft_version_range: project.minecraft_version_range.toString(),
+]
+processResources {
+    inputs.properties(templateProps)
+    filesMatching('fabric.mod.json') {
+        expand(templateProps)
+    }
+}
+
+// === 发布 ===
+// Fabric 消费方通过 modImplementation 引入库时,会把「生产 intermediary jar」重映射为 dev 命名。
+// 因此本地 maven 必须发布 remapJar(build/libs 下的 intermediary 产物),而不是 dev jar。
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            // 显式坐标:默认 artifactId 会退化为子项目名(fabric-1.20.1)。
+            artifactId = 'starengine_lib-fabric-1.20.1'
+            artifact tasks.named('remapJar')
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "starengine_lib",
+  "version": "${version}",
+  "name": "StarEngine Lib",
+  "description": "《星之骰戏》的前置共享库：跨平台战斗公式 / 目标判定 / 稀有度 / 钱包账本 / 目标选择框架。本库不注册任何注册表条目，不改变任何 ResourceLocation 归属。",
+  "authors": [
+    "Merlin Kitsune"
+  ],
+  "contact": {},
+  "license": "MIT License",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.merlinkitsune.starenginelib.StarEngineLib"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version_range}",
+    "fabric-api": "*",
+    "fabric-data-attachment-api-v1": "*"
+  }
+}
