@@ -3,7 +3,7 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.8）
+## 未发布（2.0.0-SNAPSHOT.9）
 
 ### 新增
 
@@ -12,6 +12,16 @@
   （artifactId = `starengine_lib-fabric-1.20.1`），四平台**同一版本号**。Fabric 平台提供 9 个平台接线类
   （钱包的附件持久化 / 稀有度扩展 / Trinkets 适配 / 事件基类 / 标签 等），`common` 共享源码**零改动**。
   消费方 `astral_dice` 的 `fabric-1.20.1` 线随之接入本库。
+
+### 变更
+
+- **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`：`16` → `32`**（2026-10-02 用户裁决）。
+  诅咒之剑筹码在**单次骰神赐福内**的累计攻击力加成上限**翻倍**。纯数值调整 —— 不改任何 public 类型 /
+  方法 / 字段的签名、可见性或语义形状 ⇒ 消费方**无需**改代码（读取方 `CursedSwordChipItem#onKill`
+  与 tooltip 渲染均直接读该字段）。本条系**收编**原 `fabric-1.20.1` 独立分支上唯一未并入 `next` 的
+  实质改动（该分支已于 2026-10-02 删除；其旧版本线号 `1.0.7` / `1.0.6-alpha.2` 一并作废）。
+- **四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.8` → `2.0.0-SNAPSHOT.9`**（四平台**同号**）。
+- **消费方 `astral_dice` 四线**的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.9`。
 
 ### 修复
 

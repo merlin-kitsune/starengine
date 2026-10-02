@@ -3,7 +3,7 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.8)
+## Unreleased (2.0.0-SNAPSHOT.9)
 
 ### New
 
@@ -13,6 +13,18 @@
   contributes 9 platform wiring classes (wallet attachment persistence / rarity extension / Trinkets adapter /
   event base classes / tags, etc.) with **zero changes** to the shared `common` sources.
   The consumer `astral_dice`'s `fabric-1.20.1` line now depends on this library.
+
+### Changes
+
+- **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`: `16` -> `32`** (user ruling, 2026-10-02).
+  The Cursed Sword chip's stacking attack-bonus cap **within a single Dice Blessing cycle** is **doubled**.
+  A pure value change - no public type / method / field signature, visibility or semantic shape is altered,
+  so consumers need **no** code change (both `CursedSwordChipItem#onKill` and the tooltip renderer read the
+  field directly). This entry **absorbs** the only substantive change of the former standalone
+  `fabric-1.20.1` branch that had not been merged into `next` (that branch was deleted on 2026-10-02; its
+  old line numbers `1.0.7` / `1.0.6-alpha.2` are retired with it).
+- **All four platforms' `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.8` -> `2.0.0-SNAPSHOT.9`** (one number for all four).
+- **The consumer `astral_dice`'s four lines** move their `starengine_lib_version` to `2.0.0-SNAPSHOT.9` in the same batch.
 
 ### Fixes
 
