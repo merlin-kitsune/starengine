@@ -1,5 +1,6 @@
 package com.merlinkitsune.starenginelib.target;
 
+import com.merlinkitsune.starenginelib.combat.CreatureTargets;
 import com.merlinkitsune.starenginelib.combat.HostileTargets;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,11 +25,20 @@ import net.minecraft.world.entity.player.Player;
  *       （口径见 {@link HostileTargets} 类注释；**不含玩家**，与库的「仅敌对生物」一致）；</li>
  *   <li>{@link TargetType#ENEMY_OR_RIVAL} → {@code HostileTargets.isHostile(target)}
  *       ∪ 库 {@code matches} 的「非队友玩家」分支；</li>
+ *   <li>{@link TargetType#CREATURE} → {@code CreatureTargets.isCreatureTarget(target)}
+ *       （效果牌专用：敌对 ∪ 中立（宠物除外）∪ 未驯服的可驯服生物；**不含玩家**）；</li>
+ *   <li>{@link TargetType#CREATURE_OR_RIVAL} → {@code CreatureTargets.isCreatureTarget(target)}
+ *       ∪ 库 {@code matches} 的「非队友玩家」分支（符卡-祸专用）；</li>
+ *   <li>{@link TargetType#NON_HOSTILE} → {@code !HostileTargets.isHostileMob(target)}
+ *       （治疗 / 功能效果牌专用：**非敌对生物** —— 只看原版 {@code Enemy} 标志；
+ *       未驯服的中立生物 / 已驯服宠物 / 村民 / 被动家畜 / 玩家均可选）；</li>
  *   <li>{@link TargetType#PLAYER} / {@link TargetType#LIVING} → 原样交给库的 {@code matches}。</li>
  * </ul>
  *
- * <p><b>禁止</b>在选择器代码里再直接调用 {@code targetType.matches(...)} 或写裸的
+ * <p><b>禁止</b>在选择器代码里再直接调用 {@code targetType.matches(...)}，或在**战斗 / 敌对**判定里写裸的
  * {@code instanceof Enemy} —— 那会漏掉中立生物；新增判定一律调用本类。
+ * （唯一「按 {@code Enemy} 标志」的例外 = {@link TargetType#NON_HOSTILE}：它的语义**就是**
+ * 「非敌对**生物**」，故经 {@link HostileTargets#isHostileMob} 走原版标志 —— 依然不写裸判定。）
  */
 public final class SelectorTargets {
     private SelectorTargets() {
@@ -48,6 +58,19 @@ public final class SelectorTargets {
         }
         if (type == TargetType.ENEMY_OR_RIVAL) {
             return HostileTargets.isHostile(target) || type.matches(selector, target);
+        }
+        // 效果牌专用族(2026-10-03 用户裁决):敌对 ∪ 未驯服的可驯服生物;口径见 CreatureTargets。
+        if (type == TargetType.CREATURE) {
+            return CreatureTargets.isCreatureTarget(target);
+        }
+        if (type == TargetType.CREATURE_OR_RIVAL) {
+            return CreatureTargets.isCreatureTarget(target) || type.matches(selector, target);
+        }
+        // 治疗 / 功能效果牌专用族(2026-10-03 用户裁决,同日二版 = **非敌对生物**):
+        // 只看原版 `Enemy` 标志 ⇒ 敌对生物不可选;未驯服的中立生物(狼/铁傀儡/北极熊/蜜蜂)、
+        // 已驯服宠物、村民、被动家畜、玩家**全部可选**。与伤害牌的 CREATURE 系方向相反,勿混用。
+        if (type == TargetType.NON_HOSTILE) {
+            return !HostileTargets.isHostileMob(target);
         }
         return type.matches(selector, target);
     }

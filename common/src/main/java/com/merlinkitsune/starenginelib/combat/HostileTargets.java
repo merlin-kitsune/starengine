@@ -176,6 +176,26 @@ public final class HostileTargets {
     }
 
     /**
+     * 该实体是否为**原版标志的敌对生物**（vanilla {@link Enemy} 标记接口）—— **生物类别口径**。
+     *
+     * <p>⚠️ 本库有**两套并列口径，不得互相替代**：
+     * <ul>
+     *   <li>{@link #isHostile(Entity)} = **战斗口径** —— 敌对生物 ∪ 中立生物（宠物除外）∪
+     *       会被激怒的可驯服动物 ∪ 消费方额外声明的实体；供**伤害 / 攻击 / 立牌选敌**使用
+     *       （未驯服的狼 / 铁傀儡 / 北极熊 / 蜜蜂在此**算敌对**）；</li>
+     *   <li>{@code isHostileMob} = **生物类别口径** —— 只看原版 {@link Enemy} 标志（僵尸 / 骷髅 /
+     *       掠夺者 / 末影人 / 猪灵 / 恶魂 / 潜影贝 …），**不含**上述中立生物；供「**治疗 / 增益类
+     *       效果牌可否对目标施放**」使用（2026-10-03 用户裁决）。</li>
+     * </ul>
+     *
+     * <p>本方法是「原版敌对标志」的**唯一入口** —— 玩法代码**不得**再写裸的
+     * {@code instanceof Enemy}（与 {@link #isHostile} 同一纪律，见类注释末尾）。
+     */
+    public static boolean isHostileMob(Entity entity) {
+        return entity instanceof Enemy;
+    }
+
+    /**
      * 带「视谁为敌」上下文的敌对判定(全局规则,见类注释):
      * {@code 敌对目标 = 敌对生物 ∪ 中立生物(宠物除外) ∪ 消费方额外声明的实体
      * ∪ 「非同队伍,且曾主动攻击过 viewer 的玩家」}。

@@ -3,7 +3,7 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.9）
+## 未发布（2.0.0-SNAPSHOT.10）
 
 ### 新增
 
@@ -12,6 +12,15 @@
   （artifactId = `starengine_lib-fabric-1.20.1`），四平台**同一版本号**。Fabric 平台提供 9 个平台接线类
   （钱包的附件持久化 / 稀有度扩展 / Trinkets 适配 / 事件基类 / 标签 等），`common` 共享源码**零改动**。
   消费方 `astral_dice` 的 `fabric-1.20.1` 线随之接入本库。
+
+- **新增效果牌专用目标口径 `combat/CreatureTargets` + `TargetType.CREATURE` / `CREATURE_OR_RIVAL`**
+  （2026-10-03，自 `main` 线 1.0.9 移植）：敌对 ∪ 中立（宠物除外）∪ 未驯服的可驯服生物，**不含玩家**；
+  `SelectorTargets` 新增对应路由。消费方据此收敛符卡-祸 / 活体书页等效果牌的目标面。
+- **新增 `TargetType.NON_HOSTILE` + `HostileTargets#isHostileMob(Entity)`**（2026-10-03，自 `main` 线
+  1.0.10 与 1.0.11 合并移植）：治疗 / 功能效果牌专用，判据为 `!HostileTargets.isHostileMob(target)`
+  —— 即**非敌对生物**（只看原版 `Enemy` 标志）。`HostileTargets` 类头明确**两套并列口径不得互替**：
+  战斗口径 `isHostile`（含中立生物）vs 生物类别口径 `isHostileMob`，后者是「原版敌对标志」的唯一入口。
+  ⚠️ 与伤害牌的 `CREATURE` 系**方向相反，勿混用**。
 
 ### 变更
 
@@ -22,6 +31,11 @@
   实质改动（该分支已于 2026-10-02 删除；其旧版本线号 `1.0.7` / `1.0.6-alpha.2` 一并作废）。
 - **四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.8` → `2.0.0-SNAPSHOT.9`**（四平台**同号**）。
 - **消费方 `astral_dice` 四线**的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.9`。
+
+- **`component/GameplayConstants#ACTIONBAR_FADE_TICKS`：`20` → `10`**（2026-10-03，自 `main` 同步）。
+  actionbar 淡出改为 0.5 秒；同时 `ACTIONBAR_DURATION_TICKS`（60 tick）与该项一并**退出配置文件**
+  （消费方已改为常量直接注入）⇒ 本库 actionbar 两项不再是玩家可配项。
+- 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.9` → **`2.0.0-SNAPSHOT.10`**。
 
 ### 修复
 

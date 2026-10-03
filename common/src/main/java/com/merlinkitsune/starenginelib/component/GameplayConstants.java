@@ -71,10 +71,11 @@ public final class GameplayConstants {
     // 注:忍者立牌的旧「出牌数银行」常量 KOMACHI_EXTRA_PLAYS_CAP 已于 1.0.0-SNAPSHOT.5 按期删除
     //     (主线已把忍者主动改写为「当前出牌轮一次性 +1」并删除出牌银行,合并后消费方三线零引用)。
 
-    // actionbar 消息显示总时长上限(单位: tick,默认 3 秒;任何消息最多显示该时长)
+    // actionbar 消息显示总时长上限(单位: tick,固定 3 秒 = 60 tick;2026-10-03 起不再来自配置文件)
     public static int ACTIONBAR_DURATION_TICKS = 60;
-    // actionbar 消息最后淡出时长(单位: tick,默认 1 秒)
-    public static int ACTIONBAR_FADE_TICKS = 20;
+    // actionbar 消息最后淡出时长(单位: tick,默认 0.5 秒 = 10 tick)
+    // 2026-10-03 起为固定常量:消费方已把 actionbar 两项移出配置文件(不再开放玩家调整),值由消费方常量直接注入
+    public static int ACTIONBAR_FADE_TICKS = 10;
 
     // 骰神赐福持续时长(单位:秒,默认 60)
     public static int DICE_BLESSING_DURATION_SECONDS = 60;

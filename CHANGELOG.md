@@ -3,7 +3,7 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.9)
+## Unreleased (2.0.0-SNAPSHOT.10)
 
 ### New
 
@@ -13,6 +13,18 @@
   contributes 9 platform wiring classes (wallet attachment persistence / rarity extension / Trinkets adapter /
   event base classes / tags, etc.) with **zero changes** to the shared `common` sources.
   The consumer `astral_dice`'s `fabric-1.20.1` line now depends on this library.
+
+- **New effect-card targeting surface `combat/CreatureTargets` + `TargetType.CREATURE` / `CREATURE_OR_RIVAL`**
+  (2026-10-03, ported from the `main` line 1.0.9): hostile union neutral (pets excluded) union untamed
+  tamable mobs, **excluding players**; `SelectorTargets` gains the matching routing. Consumers use it to
+  narrow the target surface of effect cards such as the Misfortune Card and the Living Page.
+- **New `TargetType.NON_HOSTILE` + `HostileTargets#isHostileMob(Entity)`** (2026-10-03, ported from the
+  `main` line 1.0.10 and 1.0.11): for healing / utility effect cards, defined as
+  `!HostileTargets.isHostileMob(target)` - i.e. **non-hostile mobs** (vanilla `Enemy` flag only). The
+  `HostileTargets` class javadoc now states that the **two parallel criteria must not substitute for each
+  other**: combat criterion `isHostile` (includes neutral mobs) vs mob-category criterion `isHostileMob`,
+  the latter being the sole entry point for the vanilla hostile flag. ⚠️ Opposite in direction to the
+  damage-card `CREATURE` family - do not mix them up.
 
 ### Changes
 
@@ -25,6 +37,12 @@
   old line numbers `1.0.7` / `1.0.6-alpha.2` are retired with it).
 - **All four platforms' `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.8` -> `2.0.0-SNAPSHOT.9`** (one number for all four).
 - **The consumer `astral_dice`'s four lines** move their `starengine_lib_version` to `2.0.0-SNAPSHOT.9` in the same batch.
+
+- **`component/GameplayConstants#ACTIONBAR_FADE_TICKS`: `20` -> `10`** (2026-10-03, synced from `main`).
+  The actionbar fade is now 0.5 s; together with `ACTIONBAR_DURATION_TICKS` (60 ticks) it has left the
+  config file (consumers now inject constants directly), so the two actionbar values are no longer
+  player-configurable.
+- All four platforms' `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.9` -> **`2.0.0-SNAPSHOT.10`**.
 
 ### Fixes
 
