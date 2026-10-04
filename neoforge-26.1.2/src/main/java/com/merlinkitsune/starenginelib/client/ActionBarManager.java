@@ -49,7 +49,10 @@ public final class ActionBarManager {
         int fadeTicks = GameplayConstants.ACTIONBAR_FADE_TICKS;
         int alpha = remaining > fadeTicks ? 255 : (int) (remaining * 255 / (double) fadeTicks);
         int x = guiGraphics.guiWidth() / 2 - mc.font.width(message) / 2;
-        int y = guiGraphics.guiHeight() - 58;
+        // ⚠️ 位置必须与原版 actionbar 一致(guiHeight-68):原版 hotbar 物品名提示固定在
+        // guiHeight-max(yShift,59),本类此前写 58 ⇒ 与物品名仅差 1px、同一行互相压盖
+        // (2026-10-03 用户实报「ActionBar 文本有时与物品名称提示重叠」)。
+        int y = guiGraphics.guiHeight() - 68;
         int color = (alpha << 24) | 0xFFFFFF;
         guiGraphics.text(mc.font, message, x, y, color, true);
     }

@@ -3,7 +3,7 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.10)
+## Unreleased (2.0.0-SNAPSHOT.11)
 
 ### New
 
@@ -28,6 +28,9 @@
 
 ### Changes
 
+- Four-platform `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.10` -> **`2.0.0-SNAPSHOT.11`** (same number on
+  all four); the consumer `astral_dice` four lines follow with `starengine_lib_version = 2.0.0-SNAPSHOT.11`.
+
 - **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`: `16` -> `32`** (user ruling, 2026-10-02).
   The Cursed Sword chip's stacking attack-bonus cap **within a single Dice Blessing cycle** is **doubled**.
   A pure value change - no public type / method / field signature, visibility or semantic shape is altered,
@@ -45,6 +48,15 @@
 - All four platforms' `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.9` -> **`2.0.0-SNAPSHOT.10`**.
 
 ### Fixes
+
+- **Aligned `client/ActionBarManager` to the vanilla actionbar position on all four platforms**
+  (ported from the `main` line `1.0.8`, 2026-10-03): the render `y` moved from `guiHeight()-58` to
+  **`guiHeight()-68`**. Vanilla pins the hotbar item-name tooltip at `guiHeight-max(yShift,59)`, so the old
+  `58` sat **1 px away on the same row and the two overlapped** (user-reported "ActionBar text sometimes
+  overlaps the item name"). The previous sync (`1c0d128`) only carried the `ACTIONBAR_FADE_TICKS` **value**
+  and **missed this position fix**; this release completes it and also corrects the class javadoc from
+  "default 5 s, driven by config" to "default 3 s / 60 ticks" (`ACTIONBAR_DURATION_TICKS` is 60).
+  The four platforms' `ActionBarManager` is now **byte-for-byte identical** to the `main` line.
 
 - **`event/EventTargetCollector`: both the FTB Teams and the OPAC reflection targets did not exist at all**
   (ported to this snapshot line from the `main` line's `1.0.6` on 2026-10-01): the two backends were

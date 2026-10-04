@@ -3,7 +3,7 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.10）
+## 未发布（2.0.0-SNAPSHOT.11）
 
 ### 新增
 
@@ -24,6 +24,9 @@
 
 ### 变更
 
+- 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.10` → **`2.0.0-SNAPSHOT.11`**（四平台**同号**）；
+  消费方 `astral_dice` 四线的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.11`。
+
 - **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`：`16` → `32`**（2026-10-02 用户裁决）。
   诅咒之剑筹码在**单次骰神赐福内**的累计攻击力加成上限**翻倍**。纯数值调整 —— 不改任何 public 类型 /
   方法 / 字段的签名、可见性或语义形状 ⇒ 消费方**无需**改代码（读取方 `CursedSwordChipItem#onKill`
@@ -38,6 +41,14 @@
 - 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.9` → **`2.0.0-SNAPSHOT.10`**。
 
 ### 修复
+
+- **四平台 `client/ActionBarManager` 位置对齐原版 actionbar**（2026-10-03，自 `main` 线 `1.0.8` 补移植）：
+  渲染 `y` 由 `guiHeight()-58` 改为 **`guiHeight()-68`**。原版 hotbar 物品名提示固定在
+  `guiHeight-max(yShift,59)`，本类此前写 58 ⇒ 与物品名**仅差 1px、同一行互相压盖**（用户实报
+  「ActionBar 文本有时与物品名称提示重叠」）。⚠️ 上一轮同步（`1c0d128`）只带了 `ACTIONBAR_FADE_TICKS`
+  的**值**，**漏了这一处位置**，本次补齐；顺带把类头 javadoc 的「默认 5 秒，由配置文件控制」订正为
+  「默认 3 秒 / 60 tick」（`ACTIONBAR_DURATION_TICKS` 实际为 60）。四平台的 `ActionBarManager`
+  现与 `main` 线**逐字节一致**（强判据：`git diff main -- <该文件>` 为空）。
 
 - **`event/EventTargetCollector` 的 FTB Teams / OPAC 两处反射**目标**根本不存在**（2026-10-01 自 `main` 线 `1.0.6` 移植到本快照线）：
   这两个后端此前**恒为未启用且毫无声响** —— 最外层 `catch (Exception ignored)` 把
