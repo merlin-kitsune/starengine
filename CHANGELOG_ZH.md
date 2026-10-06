@@ -3,7 +3,7 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.11）
+## 未发布（2.0.0-SNAPSHOT.12）
 
 ### 新增
 
@@ -27,6 +27,9 @@
 - 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.10` → **`2.0.0-SNAPSHOT.11`**（四平台**同号**）；
   消费方 `astral_dice` 四线的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.11`。
 
+- 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.11` → **`2.0.0-SNAPSHOT.12`**（四平台**同号**）；
+  消费方 `astral_dice` 四线的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.12`（fabric 线的版本区间下界同步）。
+
 - **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`：`16` → `32`**（2026-10-02 用户裁决）。
   诅咒之剑筹码在**单次骰神赐福内**的累计攻击力加成上限**翻倍**。纯数值调整 —— 不改任何 public 类型 /
   方法 / 字段的签名、可见性或语义形状 ⇒ 消费方**无需**改代码（读取方 `CursedSwordChipItem#onKill`
@@ -41,6 +44,14 @@
 - 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.9` → **`2.0.0-SNAPSHOT.10`**。
 
 ### 修复
+
+- **`client/ActionBarManager` 动态 yShift（两条 NeoForge 线）**（2026-10-05/06，自 `main` 线 `1.0.12` 移植）：
+  `neoforge-1.21.1` / `neoforge-26.1.2` 改为**复刻原版** `Gui#renderOverlayMessage` 的 yShift 规则
+  （`yShift = max(Gui.leftHeight, Gui.rightHeight) + (68 - 59)`、`y = guiHeight - max(yShift, 68)`）——
+  两字段由 NeoForge patch 成 `public`。修「有黄心（吸收心）/ 护甲 / 坐骑血把状态条堆高时，actionbar 与
+  物品名提示重叠」（旧实现硬编码 `68`，只覆盖 `max(lh, rh) <= 59` 的情形）。
+  ⚠️ **`forge-1.20.1` / `fabric-1.20.1` 保持固定 `guiHeight - 68`**：原版 1.20.1 没有 leftHeight/rightHeight
+  这套机制，硬跟着算反而错位 ⇒ **平台差异**，两平台源码已就地注明。
 
 - **四平台 `client/ActionBarManager` 位置对齐原版 actionbar**（2026-10-03，自 `main` 线 `1.0.8` 补移植）：
   渲染 `y` 由 `guiHeight()-58` 改为 **`guiHeight()-68`**。原版 hotbar 物品名提示固定在

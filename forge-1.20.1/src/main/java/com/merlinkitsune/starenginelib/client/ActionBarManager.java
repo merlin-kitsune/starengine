@@ -56,9 +56,13 @@ public final class ActionBarManager {
         int fadeTicks = GameplayConstants.ACTIONBAR_FADE_TICKS;
         int alpha = remaining > fadeTicks ? 255 : (int) (remaining * 255 / (double) fadeTicks);
         int x = guiGraphics.guiWidth() / 2 - mc.font.width(message) / 2;
-        // ⚠️ 位置必须与原版 actionbar 一致(guiHeight-68):原版 hotbar 物品名提示固定在
-        // guiHeight-max(yShift,59),本类此前写 58 ⇒ 与物品名仅差 1px、同一行互相压盖
-        // (2026-10-03 用户实报「ActionBar 文本有时与物品名称提示重叠」)。
+        // ⚠️ 本线位置**固定** guiHeight-68 —— 与 **1.20.1 原版** actionbar 一致
+        //    （原版在 1.20.1 即 translate(screenWidth/2, screenHeight-68)；物品名恒为
+        //     screenHeight-max(0,59) = screenHeight-59 ⇒ 两者恒差 9px、不会重叠）。
+        //    ⚠️ **本线刻意不跟随 NeoForge 的动态 yShift**：leftHeight/rightHeight 是 NeoForge 1.21+ 才引入的
+        //    patch，原版 1.20.1 **没有**这套机制（黄心 / 护甲不会让原版物品名或 actionbar 上抬）
+        //    ⇒ 硬跟着算反而会错位。两条 NeoForge 线的同名实现走动态公式 —— 属**已登记的平台差异**。
+        //    （历史：2026-10-03 曾把 58 改成 68 修「与物品名压盖」，那处修正对 1.20.1 仍然正确。）
         int y = guiGraphics.guiHeight() - 68;
         int color = (alpha << 24) | 0xFFFFFF;
         guiGraphics.drawString(mc.font, message, x, y, color, true);

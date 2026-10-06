@@ -3,7 +3,7 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
-## Unreleased (2.0.0-SNAPSHOT.11)
+## Unreleased (2.0.0-SNAPSHOT.12)
 
 ### New
 
@@ -31,6 +31,10 @@
 - Four-platform `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.10` -> **`2.0.0-SNAPSHOT.11`** (same number on
   all four); the consumer `astral_dice` four lines follow with `starengine_lib_version = 2.0.0-SNAPSHOT.11`.
 
+- Four-platform `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.11` -> **`2.0.0-SNAPSHOT.12`** (same number on all four);
+  the consumer `astral_dice` four lines follow with `starengine_lib_version = 2.0.0-SNAPSHOT.12` (the fabric line's
+  version-range lower bound moves with it).
+
 - **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`: `16` -> `32`** (user ruling, 2026-10-02).
   The Cursed Sword chip's stacking attack-bonus cap **within a single Dice Blessing cycle** is **doubled**.
   A pure value change - no public type / method / field signature, visibility or semantic shape is altered,
@@ -48,6 +52,16 @@
 - All four platforms' `lib_version` / `mod_version`: `2.0.0-SNAPSHOT.9` -> **`2.0.0-SNAPSHOT.10`**.
 
 ### Fixes
+
+- **Dynamic `yShift` in `client/ActionBarManager` (the two NeoForge lines)** (ported from the `main` line
+  `1.0.12`, 2026-10-05/06): `neoforge-1.21.1` / `neoforge-26.1.2` now **replicate** the vanilla
+  `Gui#renderOverlayMessage` shift (`yShift = max(Gui.leftHeight, Gui.rightHeight) + (68 - 59)`,
+  `y = guiHeight - max(yShift, 68)`; both fields are patched `public` by NeoForge). Fixes "actionbar
+  overlapping the item-name tooltip once absorption hearts / armour / mount health push the bars
+  higher" (the old code hard-coded `68`, which only covered `max(lh, rh) <= 59`).
+  ⚠️ **`forge-1.20.1` / `fabric-1.20.1` keep the fixed `guiHeight - 68`**: vanilla 1.20.1 has no such
+  mechanism, so following it would misplace the text ⇒ **a registered platform difference**, noted
+  in-place in both platforms.
 
 - **Aligned `client/ActionBarManager` to the vanilla actionbar position on all four platforms**
   (ported from the `main` line `1.0.8`, 2026-10-03): the render `y` moved from `guiHeight()-58` to
