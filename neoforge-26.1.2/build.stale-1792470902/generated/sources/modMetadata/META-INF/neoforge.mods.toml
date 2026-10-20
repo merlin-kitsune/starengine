@@ -1,0 +1,36 @@
+modLoader="javafml"
+
+# 加载器(javafml 语言提供者)版本门槛:该槽比的是语言提供者版本(不是 NeoForge 版本带),故写
+# 语言区间(= gradle.properties 的 loader_version_range,当前 [1,));NeoForge 版本带
+# [26.1.0.0,26.2) 属于下面 modId="neoforge" 依赖(见同处注释)。
+# (1.21.1 侧曾在 2026-09-17 把版本带写进该槽而触发 FML 拒载 crash-*-fml.txt,本平台一直是 [1,)。)
+loaderVersion="[1,)"
+license="MIT License"
+
+[[mods]]
+modId="starengine_lib"
+version="1.0.12+neoforge_26.1.2"
+displayName="StarEngine Lib"
+authors="MerlinKitsune, Nintyfive95"
+# ⚠️ 键名大小写敏感:必须是 logoFile(大写 F),写成 logofile 会被解析器**静默忽略**,
+# 游戏 mod 界面永远不显示图标(2026-09-22 修正,三平台同步)。
+logoFile="icon.png"
+description='''
+A common library for the Astral Dice mod. It includes cross-platform implementations and supports functional integration with other mods.
+'''
+
+# NeoForge 依赖区间:26.1.x.y 全接纳(二号位 band,与 1.21.1 侧 [21.1,21.2) 同构),
+# 26.2 / 26.3 一律拒绝。此处按 26.1.2 线的实际取值硬编码,不用属性占位(与 1.21.1 侧一致)。
+[[dependencies.starengine_lib]]
+    modId="neoforge"
+    type="required"
+    versionRange="[26.1.0.0,26.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.starengine_lib]]
+    modId="minecraft"
+    type="required"
+    versionRange="[26.1.2]"
+    ordering="NONE"
+    side="BOTH"
