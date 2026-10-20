@@ -108,3 +108,28 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// === 根目录产物固化（2026-10-21）===
+// `build` 结束后把本平台产物复制到仓库根 `build/libs`，并删除同 artifactId 的旧版本 jar。
+// 原因：此前根 `build/libs` 全靠人工拷贝，多次落后于子项目产物（2026-10-21 实测旧包 10-20 12:38）。
+// ⚠️ 配置缓存约束：Provider 与路径在**配置期**取好，`doLast` 内只做文件操作（不得访问 `tasks`/`copy`）。
+tasks.register('pushToRootBuild') {
+    group = 'build'
+    description = 'Copy this platform jar to <repo>/build/libs and remove older jars of the same artifact.'
+    def jarTaskProvider = tasks.named('jar')
+    dependsOn jarTaskProvider
+    def archiveProvider = jarTaskProvider.flatMap { it.archiveFile }
+    def outDir = rootProject.layout.projectDirectory.dir('build/libs').asFile
+    def artifactId = base.archivesName.get()
+    doLast {
+        def archive = archiveProvider.get().asFile
+        outDir.mkdirs()
+        def stale = (outDir.listFiles() ?: []).findAll {
+            it.isFile() && it.name.startsWith(artifactId + '-') && it.name.endsWith('.jar') && it.name != archive.name
+        }
+        stale.each { it.delete() }
+        new File(outDir, archive.name).bytes = archive.bytes
+        println("pushToRootBuild: ${archive.name} -> ${outDir}" + (stale ? " (removed ${stale.size()} old)" : ''))
+    }
+}
+tasks.named('build') { finalizedBy 'pushToRootBuild' }
