@@ -1,4 +1,4 @@
-// StarEngine-Lib / NeoForge 26.1.2 平台子项目(第三条线,与 1.21.1 / 1.20.1 并存)
+// StarEngine / NeoForge 26.1.2 平台子项目(第三条线,与 1.21.1 / 1.20.1 并存)
 // Java 25 · Mojmap(无 Parchment)· ModDevGradle 2.0.147 · 无需 refmap
 //
 // 源码 = 本子项目 src/main/java(平台专有) + ../../common/src/main/java(共享)
@@ -18,7 +18,7 @@ version = lib_version
 group = mod_group_id
 
 base {
-    archivesName = 'starengine_lib-neoforge-26.1.2'
+    archivesName = 'starengine-neoforge-26.1.2'
 }
 
 // Minecraft 26.1.2 的 javaVersion = java-runtime-epsilon / majorVersion 25(1.21.1 为 21)
@@ -26,7 +26,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 // === 共享源码目录 ===
 sourceSets.main.java.srcDir(project.file('../common/src/main/java'))
-// 注:此处曾有一条 `sourceSets.main.java.exclude 'com/merlinkitsune/starenginelib/event/AstralEventType.java'`
+// 注:此处曾有一条 `sourceSets.main.java.exclude 'com/merlinkitsune/starengine/event/AstralEventType.java'`
 //    —— 26.1 起 net.minecraft.resources.ResourceLocation 已改名为 Identifier,而该 record 的组件类型
 //    直接用旧名、Java 又无类型别名可言,故当时只能把该文件排除在 26.1.2 编译之外(三线唯一无法同源者)。
 //    该事件框架三件套(AstralEventType / EventContext / EventEffect)已于 1.0.0-SNAPSHOT.5 随合并收尾
@@ -81,7 +81,7 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             // 显式坐标:默认 artifactId 会退化为子项目名(neoforge-26.1.2)。
-            artifactId = 'starengine_lib-neoforge-26.1.2'
+            artifactId = 'starengine-neoforge-26.1.2'
             from components.java
         }
     }

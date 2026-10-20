@@ -1,8 +1,8 @@
-# StarEngine Lib
+# StarEngine
 
 [English](README.md) | **中文**
 
-`starengine_lib` — **Astral Dice（星之骰戏）** 系列模组共用的引擎库。
+`starengine` — **Astral Dice（星之骰戏）** 系列模组共用的引擎库。
 
 由 [Astral Dice](https://github.com/) 的 1.20.1 / 1.21.1 双版本单仓中提取，目标是为后续
 **Astral Dice Extra（星之骰戏：扩展）** 及同系列模组提供可直接复用的共享实现。
@@ -126,9 +126,9 @@ GameplayConstants.applyConfig(GameplayConfigValues)   → @Mod 构造期注册�
 
 | 平台 | 坐标 | 发布产物 |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starenginelib:starengine_lib-neoforge-1.21.1:1.0.0` | `jar`（NeoForge 编译与生产同为 Mojmap，无需重映射） |
-| Forge 1.20.1 | `com.merlinkitsune.starenginelib:starengine_lib-forge-1.20.1:1.0.0` | `reobfJar`（**生产 SRG jar**） |
-| NeoForge 26.1.2 | `com.merlinkitsune.starenginelib:starengine_lib-neoforge-26.1.2:1.0.0` | `jar`（与 1.21.1 同理，Mojmap 无需重映射） |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.0.0` | `jar`（NeoForge 编译与生产同为 Mojmap，无需重映射） |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.0.0` | `reobfJar`（**生产 SRG jar**） |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.0.0` | `jar`（与 1.21.1 同理，Mojmap 无需重映射） |
 
 > 三侧版本号**同号**，升级时三个 `gradle.properties` 必须一起改。
 
@@ -141,19 +141,19 @@ GameplayConstants.applyConfig(GameplayConfigValues)   → @Mod 构造期注册�
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starenginelib:starengine_lib-neoforge-1.21.1:1.0.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.0.0"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starenginelib:starengine_lib-forge-1.20.1:1.0.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.0.0"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starenginelib:starengine_lib-neoforge-26.1.2:1.0.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.0.0"
 }
 ```
 
@@ -165,7 +165,7 @@ dependencies {
 
 ```toml
 [[dependencies.<mod_id>]]
-    modId="starengine_lib"
+    modId="starengine"
     type="required"        # 1.20.1 Forge 用 mandatory=true
     versionRange="[1.0.0,2.0)"
     ordering="AFTER"
@@ -228,7 +228,7 @@ CI 仍会构建全部平台，但那只是**编译校验**：既不上传构建�
 Release 上存在 jar 附件就删除。（原因不是「舍不得给」：一份被单独下载的库会**静默盖掉**消费方模组
 内嵌的那一份，而后者的故障极难定位 —— 见 §4.3。）
 
-仓库托管于 <https://github.com/merlin-kitsune/starengine_lib>，工作流 `.github/workflows/build.yml`
+仓库托管于 <https://github.com/merlin-kitsune/starengine>，工作流 `.github/workflows/build.yml`
 沿用消费方 Astral Dice 的发布规范：
 
 | 触发 | 行为 |
@@ -242,9 +242,9 @@ Release 上存在 jar 附件就删除。（原因不是「舍不得给」：一�
 
 **消费方 CI 依赖本库**：Astral Dice 的 `build.yml` 会先 checkout 本仓并
 `./gradlew publishToMavenLocal`，再构建自身——因为本库只在 mavenLocal 发布，CI 上无法直接解析。
-两者版本号必须对齐（消费方 `starengine_lib_version` ↔ 本库 `lib_version`），否则消费方 CI 断在依赖解析。
+两者版本号必须对齐（消费方 `starengine_version` ↔ 本库 `lib_version`），否则消费方 CI 断在依赖解析。
 ⚠️ 该 checkout 用**提交 SHA 钉死**（消费方 `build.yml` 的 `ref:` 行），且必须指向「三平台 `gradle.properties`
-版本号 = 消费方 `starengine_lib_version`」的那一个提交 —— 库每次 bump 都要同步改消费方该行；
+版本号 = 消费方 `starengine_version`」的那一个提交 —— 库每次 bump 都要同步改消费方该行；
 库提交尚未推送到远端时，消费方 CI 无法检出（本地不受影响）。
 
 ---
@@ -252,7 +252,7 @@ Release 上存在 jar 附件就删除。（原因不是「舍不得给」：一�
 ## 5. 目录内容
 
 ```
-common/src/main/java/com/merlinkitsune/starenginelib/  # 共享源码（28 个文件）
+common/src/main/java/com/merlinkitsune/starengine/  # 共享源码（28 个文件）
 ├── client/       ClientDamageNumbers
 ├── component/    GameplayConfigValues（配置值快照）, GameplayConstants
 ├── effect/       18 个 MobEffect 实现（ReadyEffect 已于 1.0.0-SNAPSHOT.5 按期删除）
@@ -261,13 +261,13 @@ common/src/main/java/com/merlinkitsune/starenginelib/  # 共享源码（28 个�
 ├── item/         BossEntityUtil
 └── target/       TargetSelectionAction / TargetSelectionRegistry / TargetType
 
-neoforge-1.21.1/src/main/java/.../starenginelib/       # 平台专有（5 个文件）
+neoforge-1.21.1/src/main/java/.../starengine/       # 平台专有（5 个文件）
 ├── StarEngineLib          @Mod 入口
 ├── client/ActionBarManager        (DeltaTracker)
 ├── event/ModEffectRemoval         (Holder<MobEffect>)
 └── platform/LoaderEvent, LoaderTags
 
-forge-1.20.1/src/main/java/.../starenginelib/          # 平台专有（7 个文件）
+forge-1.20.1/src/main/java/.../starengine/          # 平台专有（7 个文件）
 ├── StarEngineLib          @Mod 入口
 ├── client/ActionBarManager        (float partialTick)
 ├── component/ItemDataKey
@@ -275,7 +275,7 @@ forge-1.20.1/src/main/java/.../starenginelib/          # 平台专有（7 个文
 ├── item/CuriosCompat      (Curios 仅编译期依赖;库自身不调用它)
 └── platform/LoaderEvent, LoaderTags
 
-neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文件）
+neoforge-26.1.2/src/main/java/.../starengine/       # 平台专有（5 个文件）
 ├── StarEngineLib          @Mod 入口
 ├── client/ActionBarManager        (DeltaTracker + GuiGraphicsExtractor)
 ├── event/ModEffectRemoval         (Holder<MobEffect>)
@@ -296,8 +296,8 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文
   破坏性变更**不允许**藏在次版本/补丁位里。
   ⇒ 消费方 `mods.toml` 声明 `versionRange="[1.0.0,2.0)"`，即本契约的机器可读表达：任何 `1.x` 版本都可原位替换。
 - **当前版本 = `1.0.0`**。它是首个正式版（由快照系列的最后一档 `1.0.0-SNAPSHOT.16` 规范化而来，
-  **库内 Java 源码零改动**，仅版本号去掉 `-SNAPSHOT` 限定符）。消费方三线的 `starengine_lib_version`
-  与 `starengine_lib_version_range=[1.0.0,2.0)` 与此对应。**不存在 `1.0.1`** —— 见下条。
+  **库内 Java 源码零改动**，仅版本号去掉 `-SNAPSHOT` 限定符）。消费方三线的 `starengine_version`
+  与 `starengine_version_range=[1.0.0,2.0)` 与此对应。**不存在 `1.0.1`** —— 见下条。
 - **2026-09-22 并入 `1.0.0`：移除 forge 侧的 Curios 前置**（用户裁决「使其与另外两个版本保持一致」）。
   本改动原拟作独立的 `1.0.1` 发版，推送/发布之前已并入 `1.0.0` ⇒ **`1.0.1` 无 tag、无 Release、无产物**；
   既有 `1.0.0` tag 名称不变，其 Release 附件由 CI 同批刷新。forge 的 `mods.toml` 删掉 `modId="curios"`
@@ -323,7 +323,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文
   `neoforge-1.21.1` 的 `loaderVersion` 槽（模板 `${loader_version_range}`）曾被填成 NeoForge 版本带
   `[21.1,21.2)`，而该槽比的是 **javafml 语言提供者版本**（本机 NeoForge 21.1.235 报 `4.0.42`），
   于是 FML 报 `needs language provider javafml:21.1 or above, and below 21.2 to load / We have found 4.0.42`
-  并拒绝加载库 jar，消费方 `astral_dice` 随即被判「`starengine_lib` is not installed」
+  并拒绝加载库 jar，消费方 `astral_dice` 随即被判「`starengine` is not installed」
   （崩溃报告：`run/1.21.1/crash-reports/crash-2026-09-17_20.41.28-fml.txt` 与 `…_20.42.17-fml.txt`）。
   现改为语言区间 `[1,)`（与消费方 `neoforge-1.21.1/gradle.properties:23` 同值）；NeoForge 版本带
   `[21.1,21.2)` 仍由模板里 `modId="neoforge"` 依赖承担（区间未变）。同批对齐 forge 侧的已文档化口径：
@@ -339,7 +339,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文
   PackType 解析）时返回 null；服务端 `net.minecraftforge.server.ServerLifecycleHooks`（行 214）对
   `SERVER_DATA` 做同一检查。现象：消费方 `run/1.20.1` 停在 Forge 的 `Warning while loading mods`
   界面（1 条警告，指向库 jar），`latest.log` 对应 `[net.minecraft.server.packs.repository.Pack/]:
-  Missing metadata in pack mod:starengine_lib`。除警告外，该模组的资源包**不会被注册**
+  Missing metadata in pack mod:starengine`。除警告外，该模组的资源包**不会被注册**
   （库当前无资源，故无功能损失，但属静默失效面）。**只改 Forge 1.20.1**：NeoForge 1.21.1 / 26.1.2
   不走这两段代码（两侧运行日志无该警告），且各 MC 版本的 `pack_format` 不同，故其余平台的取值
   **不猜测**（需要时按各自版本客户端源码取值再补）。库内 Java 源码零改动。该修复原先以
@@ -370,7 +370,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文
   `sourceSets.main.java.exclude` 排除在 26.1.2 之外 —— 它与其同族在消费方主线已删除，本库合并后即删。
 - **变更记录**：`1.0.0-SNAPSHOT.4` 只**新增**类（`effect/ReadyEffect`），不删类、不改签名 ——
   但对「按 `.4` 编译的消费方」它是**加载期必需前置**：运行环境里若仍是 `.3` 的库 jar，会在加载期以
-  `NoClassDefFoundError: com/merlinkitsune/starenginelib/effect/ReadyEffect` 崩溃，故消费方必须把区间
+  `NoClassDefFoundError: com/merlinkitsune/starengine/effect/ReadyEffect` 崩溃，故消费方必须把区间
   下界抬到 `[1.0.0-SNAPSHOT.4,2.0)`；反向（用 `.3` 编译、环境为 `.4`）保持兼容。
 - **破坏性变更记录**：`1.0.0-SNAPSHOT.3` 完全移除 Cloth Config 前置与库内公共配置模块
   （`StarEngineCommonConfig` / `StarEngineConfigs` / `LegacyCommonTomlImporter` / `StarEngineConfigScreen`），
@@ -380,11 +380,11 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # 平台专有（5 个文
   截至 `1.0.0-SNAPSHOT.5`：`KOMACHI_EXTRA_PLAYS_CAP` 与事件框架三件套均已按期删除（三件套以消费方
   侧遗留 import 清理完毕为前提，见 §1.3）。消费方需回归自己的 TOML 配置
   （`ModConfigSpec` / `ForgeConfigSpec`）并在配置加载后推送值快照（见 §3）。
-  注意 `modId`（`starengine_lib`）**未**变更，故整合包文件名不受影响。
+  注意 `modId`（`starengine`）**未**变更，故整合包文件名不受影响。
 - **破坏性变更记录**：`1.0.0-SNAPSHOT.2` 将 Java 包名由 `com.merlinkitsune.starengine`
-  改为 `com.merlinkitsune.starenginelib`（maven group 同步改为 `com.merlinkitsune.starenginelib`）。
+  改为 `com.merlinkitsune.starengine`（maven group 同步改为 `com.merlinkitsune.starengine`）。
   消费方所有 `import` 必须同步改写，且必须把区间下界提到 `[1.0.0-SNAPSHOT.2,...)`。
-  注意 `modId`（`starengine_lib`）**未**变更，故 `mods.toml` 的依赖声明与整合包文件名不受影响。
+  注意 `modId`（`starengine`）**未**变更，故 `mods.toml` 的依赖声明与整合包文件名不受影响。
 - 共享源码中对 MC API 的使用受两侧编译期约束，破坏性变更会在**编译期**而非运行期暴露。
 
 ---

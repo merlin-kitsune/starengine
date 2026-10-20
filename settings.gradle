@@ -1,4 +1,4 @@
-// StarEngine-Lib(星引擎库)多加载器单仓根设置
+// StarEngine(星引擎库)多加载器单仓根设置
 //
 // 结构说明(与消费方 astral_dice_multiloader 同构,但多了 common 共享源码目录):
 //   - 本项目跨 MC 版本(1.21.1 NeoForge / 1.20.1 Forge / 26.1.2 NeoForge / 1.20.1 Fabric),各侧 API 差异大,
@@ -27,7 +27,7 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-rootProject.name = 'starengine_lib'
+rootProject.name = 'starengine'
 
 include 'neoforge-1.21.1'
 include 'forge-1.20.1'

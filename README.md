@@ -1,8 +1,8 @@
-# StarEngine Lib
+# StarEngine
 
 **English** | [中文](README_ZH.md)
 
-`starengine_lib` — the shared engine library used by the **Astral Dice** mod family.
+`starengine` — the shared engine library used by the **Astral Dice** mod family.
 
 It was extracted from the 1.20.1 / 1.21.1 dual-version single repository of
 [Astral Dice](https://github.com/), with the goal of giving the upcoming
@@ -138,9 +138,9 @@ GameplayConstants.applyConfig(GameplayConfigValues)    -> registers the config d
 
 | Platform | Coordinate | Published artifact |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starenginelib:starengine_lib-neoforge-1.21.1:1.0.0` | `jar` (NeoForge compiles and runs on Mojmap, no remapping needed) |
-| Forge 1.20.1 | `com.merlinkitsune.starenginelib:starengine_lib-forge-1.20.1:1.0.0` | `reobfJar` (**production SRG jar**) |
-| NeoForge 26.1.2 | `com.merlinkitsune.starenginelib:starengine_lib-neoforge-26.1.2:1.0.0` | `jar` (same as 1.21.1: Mojmap, no remapping needed) |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.0.0` | `jar` (NeoForge compiles and runs on Mojmap, no remapping needed) |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.0.0` | `reobfJar` (**production SRG jar**) |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.0.0` | `jar` (same as 1.21.1: Mojmap, no remapping needed) |
 
 > The three platforms share **the same version number**; on a version bump all three `gradle.properties` must change together.
 
@@ -154,19 +154,19 @@ environment throw `NoSuchFieldError` because the member names are Mojmap.
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starenginelib:starengine_lib-neoforge-1.21.1:1.0.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.0.0"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starenginelib:starengine_lib-forge-1.20.1:1.0.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.0.0"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starenginelib:starengine_lib-neoforge-26.1.2:1.0.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.0.0"
 }
 ```
 
@@ -179,7 +179,7 @@ The `mods.toml` on both sides must declare it as a required dependency:
 
 ```toml
 [[dependencies.<mod_id>]]
-    modId="starengine_lib"
+    modId="starengine"
     type="required"        # 1.20.1 Forge uses mandatory=true
     versionRange="[1.0.0,2.0)"
     ordering="AFTER"
@@ -250,7 +250,7 @@ CI still builds every platform as a compile check, but it uploads **no** build a
 independently downloaded copy of the library silently shadows the copy the consumer mod embeds, and the
 resulting failure is very hard to diagnose — see §4.3.)
 
-The repository is hosted at <https://github.com/merlin-kitsune/starengine_lib>, and the workflow
+The repository is hosted at <https://github.com/merlin-kitsune/starengine>, and the workflow
 `.github/workflows/build.yml` follows the consumer Astral Dice release convention:
 
 | Trigger | Behaviour |
@@ -265,10 +265,10 @@ The repository is hosted at <https://github.com/merlin-kitsune/starengine_lib>, 
 
 **The consumer's CI depends on this library**: Astral Dice's `build.yml` first checks this repository out and runs
 `./gradlew publishToMavenLocal`, then builds itself — because this library only publishes to mavenLocal and cannot be
-resolved directly on CI. Both version numbers must line up (consumer `starengine_lib_version` ↔ library `lib_version`),
+resolved directly on CI. Both version numbers must line up (consumer `starengine_version` ↔ library `lib_version`),
 otherwise the consumer's CI fails at dependency resolution.
 ⚠️ That checkout is **pinned by commit SHA** (the consumer's `build.yml` `ref:` line) and must point at the commit whose
-three `gradle.properties` version numbers equal the consumer's `starengine_lib_version` — every library bump must update
+three `gradle.properties` version numbers equal the consumer's `starengine_version` — every library bump must update
 that line in the consumer. While the library commit has not been pushed to the remote, the consumer's CI cannot check it
 out (local builds are unaffected).
 
@@ -277,7 +277,7 @@ out (local builds are unaffected).
 ## 5. Repository contents
 
 ```
-common/src/main/java/com/merlinkitsune/starenginelib/  # shared source (28 files)
+common/src/main/java/com/merlinkitsune/starengine/  # shared source (28 files)
 ├── client/       ClientDamageNumbers
 ├── component/    GameplayConfigValues (config value snapshot), GameplayConstants
 ├── effect/       18 MobEffect implementations (ReadyEffect was deleted on schedule in 1.0.0-SNAPSHOT.5)
@@ -286,13 +286,13 @@ common/src/main/java/com/merlinkitsune/starenginelib/  # shared source (28 files
 ├── item/         BossEntityUtil
 └── target/       TargetSelectionAction / TargetSelectionRegistry / TargetType
 
-neoforge-1.21.1/src/main/java/.../starenginelib/       # platform-specific (5 files)
+neoforge-1.21.1/src/main/java/.../starengine/       # platform-specific (5 files)
 ├── StarEngineLib          @Mod entry point
 ├── client/ActionBarManager        (DeltaTracker)
 ├── event/ModEffectRemoval         (Holder<MobEffect>)
 └── platform/LoaderEvent, LoaderTags
 
-forge-1.20.1/src/main/java/.../starenginelib/          # platform-specific (7 files)
+forge-1.20.1/src/main/java/.../starengine/          # platform-specific (7 files)
 ├── StarEngineLib          @Mod entry point
 ├── client/ActionBarManager        (float partialTick)
 ├── component/ItemDataKey
@@ -300,7 +300,7 @@ forge-1.20.1/src/main/java/.../starenginelib/          # platform-specific (7 fi
 ├── item/CuriosCompat      (Curios is a compile-time dependency only; the library never calls it)
 └── platform/LoaderEvent, LoaderTags
 
-neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 files)
+neoforge-26.1.2/src/main/java/.../starengine/       # platform-specific (5 files)
 ├── StarEngineLib          @Mod entry point
 ├── client/ActionBarManager        (DeltaTracker + GuiGraphicsExtractor)
 ├── event/ModEffectRemoval         (Holder<MobEffect>)
@@ -325,8 +325,8 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 fi
   any `1.x` version can be swapped in place.
 - **Current version = `1.0.0`**. It was the first final release, normalised from the last snapshot of the series,
   `1.0.0-SNAPSHOT.16` (**zero Java source changes in the library**; only the `-SNAPSHOT` qualifier was dropped from the
-  version number). The consumer's three lines match with `starengine_lib_version` and
-  `starengine_lib_version_range=[1.0.0,2.0)`. **There is no `1.0.1`** — see the next bullet.
+  version number). The consumer's three lines match with `starengine_version` and
+  `starengine_version_range=[1.0.0,2.0)`. **There is no `1.0.1`** — see the next bullet.
 - **Merged into `1.0.0` (2026-09-22): the Curios prerequisite is removed on the Forge side** (user decision,
   "make it consistent with the other two versions"). The change was briefly prepared as a separate `1.0.1` release and
   then folded back into `1.0.0` before it was ever pushed or published, so **`1.0.1` has no tag, no Release and no
@@ -360,7 +360,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 fi
   version band `[21.1,21.2)`, while that slot compares against the **javafml language-provider version** (on NeoForge
   21.1.235 that reports `4.0.42`), so FML printed `needs language provider javafml:21.1 or above, and below 21.2 to
   load / We have found 4.0.42` and refused to load the library jar; the consumer `astral_dice` was then judged
-  "`starengine_lib` is not installed" (crash reports: `run/1.21.1/crash-reports/crash-2026-09-17_20.41.28-fml.txt` and
+  "`starengine` is not installed" (crash reports: `run/1.21.1/crash-reports/crash-2026-09-17_20.41.28-fml.txt` and
   `…_20.42.17-fml.txt`). It is now the language range `[1,)` (same value as the consumer's
   `neoforge-1.21.1/gradle.properties:23`); the NeoForge version band `[21.1,21.2)` is still carried by the
   `modId="neoforge"` dependency in the template (range unchanged). The same batch aligned the already documented Forge
@@ -378,7 +378,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 fi
   that PackType); the server side, `net.minecraftforge.server.ServerLifecycleHooks` (line 214), runs the same check for
   `SERVER_DATA`. Symptom: the consumer's `run/1.20.1` stopped on Forge's `Warning while loading mods` screen (one
   warning pointing at the library jar), with `latest.log` showing
-  `[net.minecraft.server.packs.repository.Pack/]: Missing metadata in pack mod:starengine_lib`. Beyond the warning, that
+  `[net.minecraft.server.packs.repository.Pack/]: Missing metadata in pack mod:starengine`. Beyond the warning, that
   mod's resource pack is **not registered** at all (the library currently has no resources, so nothing is lost
   functionally, but it is a silent-failure surface). **Only Forge 1.20.1 was changed**: NeoForge 1.21.1 / 26.1.2 do not
   go through those two code paths (their run logs show no such warning), and `pack_format` differs per MC version, so
@@ -419,7 +419,7 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 fi
 - **Change record**: `1.0.0-SNAPSHOT.4` only **added** a class (`effect/ReadyEffect`); it deleted no class and changed no
   signature — but for "a consumer compiled against `.4`" it is a **load-time required prerequisite**: if the runtime
   still holds the `.3` library jar, it crashes at load with
-  `NoClassDefFoundError: com/merlinkitsune/starenginelib/effect/ReadyEffect`, so the consumer had to raise the range
+  `NoClassDefFoundError: com/merlinkitsune/starengine/effect/ReadyEffect`, so the consumer had to raise the range
   lower bound to `[1.0.0-SNAPSHOT.4,2.0)`; the reverse (compiled against `.3`, running `.4`) stays compatible.
 - **Breaking change record**: `1.0.0-SNAPSHOT.3` removed the Cloth Config prerequisite and the library's public config
   module entirely (`StarEngineCommonConfig` / `StarEngineConfigs` / `LegacyCommonTomlImporter` /
@@ -430,12 +430,12 @@ neoforge-26.1.2/src/main/java/.../starenginelib/       # platform-specific (5 fi
   that round of commits unbuildable). As of `1.0.0-SNAPSHOT.5` both `KOMACHI_EXTRA_PLAYS_CAP` and the trio had been
   deleted on schedule (the trio conditional on the consumer's leftover imports being cleaned up, see §1.3). Consumers
   must return to their own TOML configuration (`ModConfigSpec` / `ForgeConfigSpec`) and push the value snapshot after
-  the config loads (see §3). Note that the `modId` (`starengine_lib`) did **not** change, so modpack file names are
+  the config loads (see §3). Note that the `modId` (`starengine`) did **not** change, so modpack file names are
   unaffected.
 - **Breaking change record**: `1.0.0-SNAPSHOT.2` changed the Java package name from `com.merlinkitsune.starengine` to
-  `com.merlinkitsune.starenginelib` (the Maven group likewise became `com.merlinkitsune.starenginelib`). Every consumer
+  `com.merlinkitsune.starengine` (the Maven group likewise became `com.merlinkitsune.starengine`). Every consumer
   `import` had to be rewritten, and the range lower bound had to be raised to `[1.0.0-SNAPSHOT.2,...)`. Note that the
-  `modId` (`starengine_lib`) did **not** change, so the `mods.toml` dependency declaration and modpack file names are
+  `modId` (`starengine`) did **not** change, so the `mods.toml` dependency declaration and modpack file names are
   unaffected.
 - The shared source's use of MC APIs is constrained at compile time on both sides, so breaking changes surface **at
   compile time** rather than at runtime.

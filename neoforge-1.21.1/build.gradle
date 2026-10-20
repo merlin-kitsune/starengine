@@ -1,4 +1,4 @@
-// StarEngine-Lib / NeoForge 1.21.1 平台子项目
+// StarEngine / NeoForge 1.21.1 平台子项目
 // Java 21 · Mojmap + Parchment · ModDevGradle 2.0.141 · 无需 refmap
 //
 // 源码 = 本子项目 src/main/java(平台专有) + ../../common/src/main/java(共享)
@@ -14,7 +14,7 @@ version = lib_version
 group = mod_group_id
 
 base {
-    archivesName = 'starengine_lib-neoforge-1.21.1'
+    archivesName = 'starengine-neoforge-1.21.1'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -78,7 +78,7 @@ publishing {
         register('mavenJava', MavenPublication) {
             // 显式坐标:默认 artifactId 会退化为子项目名(neoforge-1.21.1),
             // 与 archivesName 不一致会造成消费方书写困惑,故显式指定。
-            artifactId = 'starengine_lib-neoforge-1.21.1'
+            artifactId = 'starengine-neoforge-1.21.1'
             from components.java
         }
     }

@@ -1,4 +1,4 @@
-// StarEngine-Lib / Fabric 1.20.1 平台子项目
+// StarEngine / Fabric 1.20.1 平台子项目
 // Java 17 · Mojang 官方映射(officialMojangMappings)· Fabric Loom 1.14.10
 //
 // 源码 = 本子项目 src/main/java(平台专有) + ../../common/src/main/java(共享)
@@ -16,7 +16,7 @@ version = lib_version
 group = mod_group_id
 
 base {
-    archivesName = 'starengine_lib-fabric-1.20.1'
+    archivesName = 'starengine-fabric-1.20.1'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -78,7 +78,7 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             // 显式坐标:默认 artifactId 会退化为子项目名(fabric-1.20.1)。
-            artifactId = 'starengine_lib-fabric-1.20.1'
+            artifactId = 'starengine-fabric-1.20.1'
             artifact tasks.named('remapJar')
         }
     }

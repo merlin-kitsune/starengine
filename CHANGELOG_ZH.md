@@ -3,13 +3,43 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
-## 未发布（2.0.0-SNAPSHOT.12）
+## 未发布（2.0.0-SNAPSHOT.15）
+
+### 变更
+
+- **库标识符原子改名 `StarEngine Lib` → `StarEngine`（2026-10-19，破坏性）**：modId `starengine_lib` → `starengine`，
+  group/包根 `com.merlinkitsune.starenginelib` → `com.merlinkitsune.starengine`，artifactId 前缀 `starengine_lib-` → `starengine-`；
+  版本仍为 `2.0.0-SNAPSHOT.15`。钱包 NBT 根键改为 `starengine`，读取时从旧键 `starengine_lib` 自动迁移并记
+  `AP_WALLET_NBT_MIGRATED:key=starengine_lib->starengine`（2.0.1 删除迁移）；Fabric 附件 id 同理。
+  消费方须同步改 import、`starengine_lib_version` pin 与 JarJar 坐标。
 
 ### 新增
 
+- **新增 `event/EffectTimerGuard` 与计时表 seam `event/TimerSource`（自消费方 `astral_dice` 下沉）**：
+  公开 API 与语义逐字不变（`INFINITE_THRESHOLD`、嵌套 record `TimerEntry` + `CODEC`、`isForcedRemoval` /
+  `apply` / `record` / `tick` / `forget` / `clear`）；「20t/s 强制校正」「到期残留按 1 tick 重施加」
+  「减速截断容差 20t」「结束时刻取 max」等逻辑原样保留。计时表不再直接读消费方 AttachmentType，
+  改为可注入的静态 `TimerSource`（`getTimers` / `setTimers` / `now`），新增 `setTimerSource(TimerSource)`；
+  未注入时退化实现恒空、守卫不生效但**不抛异常**。效果 API 的 `MobEffect` / `Holder<MobEffect>` /
+  `Identifier` 三处分歧由四平台各一份 `event/EffectTimerAccess` 吸收（共享源码只按注册名交互）。
+  消费方须在初始化阶段调用 `EffectTimerGuard.setTimerSource(...)` 注入实现，并删除各自平台线的副本（pin 随本版同步）。
+
+- **新增 `target/HoldToSelect` 与 `target/SelfTargetable`（两个纯扩展接口，自消费方 `astral_dice` 下沉）**：
+  `HoldToSelect#stillHeld(Player)` 与 `SelfTargetable#allowSelf()`（缺省 `false`）签名逐字不变；包名
+  `com.merlinkitsune.starengine.target`，两文件均不引用消费方。`TargetSelectionAction` 未改动（不新增方法）；
+  `TargetSelectionManager` 仍留在主模组（含消费方专有依赖）。`SelectorTargets#matches(type, selector, target, allowSelf)`
+  原本就在消费该标志，本次未改。消费方须改用库内接口并删除各自副本（pin 随本版同步）。
+
+- **新增 `combat/EliteTargets`（精英 / Boss 判定唯一入口）与 `thirdparty/StarengineThirdParty` 门面**（2026-10-19，
+  自消费方 `astral_dice` 下沉）：`EliteTargets#isEliteOrBoss` 的签名与口径逐字不变（血量 > 40 或护甲 > 20；
+  `c:bosses` / boss 血条；第三方标记）。原先写在主模组里的 Apotheosis 判定（`apoth.boss` / `apoth.miniboss`
+  两个持久化 NBT 键）改为库内**默认注册的内置探针**，经反射读取 ⇒ 四平台均可编译（Fabric 1.20.1 无
+  `Entity#getPersistentData()`，该探针恒返回 `false`）；消费方以后只调用库的语义方法，不再直接接触该键。
+  消费方须改用库内 `EliteTargets` 并删除各自平台线里的同名类（pin 随本版同步）。
+
 - **新增 Fabric 1.20.1 平台子项目**（2026-10-01）：本库现提供**四平台**产物 ——
   `neoforge-1.21.1` / `forge-1.20.1` / `neoforge-26.1.2` / **`fabric-1.20.1`**
-  （artifactId = `starengine_lib-fabric-1.20.1`），四平台**同一版本号**。Fabric 平台提供 9 个平台接线类
+  （artifactId = `starengine-fabric-1.20.1`），四平台**同一版本号**。Fabric 平台提供 9 个平台接线类
   （钱包的附件持久化 / 稀有度扩展 / Trinkets 适配 / 事件基类 / 标签 等），`common` 共享源码**零改动**。
   消费方 `astral_dice` 的 `fabric-1.20.1` 线随之接入本库。
 
@@ -25,10 +55,10 @@
 ### 变更
 
 - 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.10` → **`2.0.0-SNAPSHOT.11`**（四平台**同号**）；
-  消费方 `astral_dice` 四线的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.11`。
+  消费方 `astral_dice` 四线的 `starengine_version` 随本版同步为 `2.0.0-SNAPSHOT.11`。
 
 - 四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.11` → **`2.0.0-SNAPSHOT.12`**（四平台**同号**）；
-  消费方 `astral_dice` 四线的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.12`（fabric 线的版本区间下界同步）。
+  消费方 `astral_dice` 四线的 `starengine_version` 随本版同步为 `2.0.0-SNAPSHOT.12`（fabric 线的版本区间下界同步）。
 
 - **`component/GameplayConstants#CURSED_SWORD_BONUS_MAX`：`16` → `32`**（2026-10-02 用户裁决）。
   诅咒之剑筹码在**单次骰神赐福内**的累计攻击力加成上限**翻倍**。纯数值调整 —— 不改任何 public 类型 /
@@ -36,7 +66,7 @@
   与 tooltip 渲染均直接读该字段）。本条系**收编**原 `fabric-1.20.1` 独立分支上唯一未并入 `next` 的
   实质改动（该分支已于 2026-10-02 删除；其旧版本线号 `1.0.7` / `1.0.6-alpha.2` 一并作废）。
 - **四平台 `lib_version` / `mod_version`：`2.0.0-SNAPSHOT.8` → `2.0.0-SNAPSHOT.9`**（四平台**同号**）。
-- **消费方 `astral_dice` 四线**的 `starengine_lib_version` 随本版同步为 `2.0.0-SNAPSHOT.9`。
+- **消费方 `astral_dice` 四线**的 `starengine_version` 随本版同步为 `2.0.0-SNAPSHOT.9`。
 
 - **`component/GameplayConstants#ACTIONBAR_FADE_TICKS`：`20` → `10`**（2026-10-03，自 `main` 同步）。
   actionbar 淡出改为 0.5 秒；同时 `ACTIONBAR_DURATION_TICKS`（60 tick）与该项一并**退出配置文件**
@@ -103,13 +133,13 @@
 
 ### 工程
 
-- **本库不再对外分发任何 jar —— 只保留源码**（2026-10-01 用户裁决）。CI 的 `Upload StarEngine Lib JARs`
+- **本库不再对外分发任何 jar —— 只保留源码**（2026-10-01 用户裁决）。CI 的 `Upload StarEngine JARs`
   步骤整体删除：构建照跑（仍会产出 jar，但只留在 runner 上）；Release 步骤改为**不带任何附件**，
   只保留 GitHub 自动生成的源码归档，并新增**自愈清理** —— 发现该 Release 上存在 `*.jar` 附件即
-  `gh release delete-asset` 删除（重复执行幂等）。历史存量同步清除：远端 `starengine_lib-jars`
+  `gh release delete-asset` 删除（重复执行幂等）。历史存量同步清除：远端 `starengine-jars`
   artifacts **12 个全部删除**（Release 侧逐 tag 交叉核验为 **0** 个）。
   原因与上面 `pushToPack` 那条同源：一份被单独下载的库会**静默盖掉**消费方内嵌的那一份，故障极难定位。
-  ⚠️ **消费方需要同步做的事：无** —— 仍按 `starengine_lib_version` 硬 pin + JarJar 内嵌，不受影响。
+  ⚠️ **消费方需要同步做的事：无** —— 仍按 `starengine_version` 硬 pin + JarJar 内嵌，不受影响。
 - 同步更新 `README_ZH` / `README`（§4.3 删去「从本仓 Release 手动取用」、§4.4 表格改为「什么都不上传 /
   Release 附件：无」并补政策顶注；顺带把 CI 的 JDK 计数由「双（21 + 17）」订正为三套 21 / 17 / 25）。
   CHANGELOG 历史条目中关于「Release 附件」的表述**保留**，作为当时事实的记录。
@@ -154,7 +184,7 @@
 
 ## 1.0.4
 
-> 纯新增（无破坏性变更）⇒ 按补丁位发布；消费方 `starengine_lib_version_range` 下界随之收紧至 `[1.0.4,2.0)`。
+> 纯新增（无破坏性变更）⇒ 按补丁位发布；消费方 `starengine_version_range` 下界随之收紧至 `[1.0.4,2.0)`。
 
 ### 新功能
 
@@ -240,13 +270,13 @@
 - **新增**(seam):新嵌套类型 `ExtraHostileProbe` + 新静态方法 `installExtraHostileProbe` +
   既有 `isHostile(Entity)` 末尾追加一次 probe 调用;未删除 / 改名 / 改签名任何既有 public API。
 - ⚠️ **语义变更**(上面那条):按契约本应升主版本,经用户裁决作**特例**按补丁位发布 ⇒ 消费方
-  `starengine_lib_version_range` 的下界随本版收紧至 `[1.0.3,2.0)`。
+  `starengine_version_range` 的下界随本版收紧至 `[1.0.3,2.0)`。
 
 ## 1.0.0
 
 > 约定：对当前版本已记录条目的后续改动，直接合并进原条目，仅保留改动后的最终版本，不追加「再次修改」条目。
 > 版本号说明：`1.0.0` 是库的**首个正式版** —— 由快照系列的最后一档 `1.0.0-SNAPSHOT.16` 规范化而来，
-> **库内 Java 源码零改动**，产物文件名变为 `starengine_lib-<平台>-1.0.0.jar`。`.16` 即**消费方 26.1.2 线接入**
+> **库内 Java 源码零改动**，产物文件名变为 `starengine-<平台>-1.0.0.jar`。`.16` 即**消费方 26.1.2 线接入**
 > 那一档（仅随消费方「26.1.2 完整移植」推进版本号；库的历史口径为「每个实质提交进 1 档」）。
 > 附注（2026-09-22）：forge 侧「移除 Curios 前置」原拟作 `1.0.1`，现**并入本版本**（见下方「依赖与元数据」）；
 > `1.0.1` 从未推送、从未发布。
@@ -261,7 +291,7 @@
   导致 `26.1.2` 上 `StarEngineEconomy.isAvailable()` 恒为 `false`：`/starcoin` 命令不注册、拾取星币不会
   被吸收进钱包、余额条永远是 0。现由 26.1.2 的库入口（`StarEngineLib`）注入该实现，与另两条线完全一致。
   - 数据布局、键名、`PlayerEvent.Clone` 的余额搬运与离线 `.dat` 解析与 1.21.1 实现**逐字同构**
-    （持久化数据根段 `NeoForgeData`，`starengine_lib/star_coin_wallet`，`balance`/`name`）。
+    （持久化数据根段 `NeoForgeData`，`starengine/star_coin_wallet`，`balance`/`name`）。
   - 只吸收了两处 26.1.2 的平台 API 变更（均已在代码内就地注明）：`CompoundTag` 的取值/子标签访问改为
     `Optional` / `*Or` 系列（不再有 `contains(String,int)` 与返回裸 `CompoundTag` 的 `getCompound(String)`）；
     命令权限改为**命名权限集**（`CommandSourceStack#hasPermission(int)` 已删除），seam 的数字等级映射到
@@ -284,10 +314,10 @@
     （`astral_dice` 的 1.20.1 侧已声明 `mandatory=true [5,6)`）。
   - ⇒ **三个平台的库 jar 都不再声明 Curios 前置**（neo 两线本来就没有），三线的依赖块形态至此一致。
 - 本改动是**纯放宽**：不删除/不改名任何 public 类型、方法、字段、常量，不改可见性/签名/语义
-  ⇒ 符合下方兼容性政策，**消费方 `starengine_lib_version_range=[1.0.0,2.0)` 无需收紧**，也无需改消费方代码。
+  ⇒ 符合下方兼容性政策，**消费方 `starengine_version_range=[1.0.0,2.0)` 无需收紧**，也无需改消费方代码。
   唯一代价：若某消费方漏声明 curios 却调用该 shim，失败形态会从加载器的「缺必需前置」明确报错
   退化为运行期 `NoClassDefFoundError`。
-- 三平台**恒同号发布** ⇒ 产物文件名保持 `starengine_lib-<平台>-1.0.0.jar`，**不产生 `1.0.1` 产物**。
+- 三平台**恒同号发布** ⇒ 产物文件名保持 `starengine-<平台>-1.0.0.jar`，**不产生 `1.0.1` 产物**。
 
 ### 工程（并入 `1.0.0`）
 
@@ -306,7 +336,7 @@
 - **同一主版本号内（第一位数字不变，当前 = `1.x`）禁止任何破坏性更新。** 不得删除或改名任何 public 类型、
   方法、字段、常量，也不得改变其可见性、签名或既有语义；只允许**新增**（新类型、新成员、新可选入口）
   与不改变契约的行为修正。
-- **破坏性变更必须升第一位（`1.x` → `2.x`）**，并在同一次发布里收紧消费方 `starengine_lib_version_range` 的下界。
+- **破坏性变更必须升第一位（`1.x` → `2.x`）**，并在同一次发布里收紧消费方 `starengine_version_range` 的下界。
   破坏性变更**不允许**藏在次版本/补丁位里。
 - ⇒ 消费方区间 `[1.0.0,2.0)` 即本政策的机器可读表达：任何 `1.x` 版本都可原位替换，无需改动消费方代码。
 - 本条**取代**此前 `gradle.properties` 里「SNAPSHOT 系列的 API 不作语义化兼容承诺」的口径 —— 该豁免仅覆盖
@@ -316,10 +346,10 @@
 
 - 三平台版本号由 `1.0.0-SNAPSHOT.16` 规范化为 **`1.0.0`** 并已 `publishToMavenLocal`
   （`./gradlew publishToMavenLocal`）；三个 jar 为
-  `starengine_lib-{neoforge-1.21.1,forge-1.20.1,neoforge-26.1.2}-1.0.0.jar`。
+  `starengine-{neoforge-1.21.1,forge-1.20.1,neoforge-26.1.2}-1.0.0.jar`。
 - 消费方 `astral_dice` 的 **26.1.2 线**首次接入本版本（即原 `.16` 代码）：此前该线 pin 在 `.11`，且**本地仍留有**
   `combat/HostileTargets`、`combat/PlayerHostilityTracker`、`target/SelectorTargets`、`target/SignSelectionGate`
-  四个已被 `.15` 下沉取代的副本（冻结期未同步）——本次移植一并删除，引用改指 `com.merlinkitsune.starenginelib.*`，
+  四个已被 `.15` 下沉取代的副本（冻结期未同步）——本次移植一并删除，引用改指 `com.merlinkitsune.starengine.*`，
   并补齐平台挂点 `combat/PlayerHostilityTrackerEvents` 与 `InternalDamageWindows.install(...)` 注入
   （与 1.21.1 / 1.20.1 两侧同构）。
 - **库内 Java 源码零改动**；必须发布新版本号的原因同前几版：该版本号不以 `-SNAPSHOT` 结尾（按 Maven 语义属普通版本），
@@ -393,7 +423,7 @@
 
 ### 工程
 
-- **修复：Forge 1.20.1 加载界面报「File … failed to load a valid ResourcePackInfo」**。现象：消费方 `run/1.20.1` 客户端进入 Forge 的 `Warning while loading mods` 界面，列出 1 条警告并指向库 jar（用户截图与 `latest.log` 均指向 `starengine_lib-forge-1.20.1-1.0.0-SNAPSHOT.5.jar`；`.6` 同样缺该文件，故该警告与快照序号无关），日志对应行 `[net.minecraft.server.packs.repository.Pack/]: Missing metadata in pack mod:starengine_lib`。根因（**读本机 Forge 1.20.1 源码取证**，非推测）：`net.minecraftforge.client.loading.ClientModLoader#clientPackFinder`（行 154-165）对**每一个**模组文件调用 `Pack.readMetaAndCreate(name, …, PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, …)`，返回 `null` 时执行 `ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()))` —— `assets/forge/lang/*.json` 里该键的文案即 `File {2} failed to load a valid ResourcePackInfo`；`Pack.readMetaAndCreate` 在 jar 内**没有 `pack.mcmeta`**（或元数据无法按该 PackType 解析）时返回 null。服务端同源：`net.minecraftforge.server.ServerLifecycleHooks`（行 214）在 `PackType.SERVER_DATA` 上做同一检查。⇒ 凡缺 `pack.mcmeta` 的 Forge 1.20.1 模组 jar 都会各报一条警告，且其资源包**不被注册**（库当前无资源 ⇒ 无功能损失，但属静默失效面）。处置：新增 `forge-1.20.1/src/main/resources/pack.mcmeta`（`pack_format` **15**、`description` = `starengine_lib resources`，与消费方 `forge-1.20.1/src/main/resources/pack.mcmeta` 同形）。**范围仅 Forge 1.20.1**：NeoForge 1.21.1 / 26.1.2 不走这两段代码（两侧运行日志无该警告，消费方三线 jar 也只在 1.20.1 侧带 `pack.mcmeta`），且各版本 `pack_format` 不同，故**不猜测**其余平台的取值（需要时按各自版本客户端源码取值再补）。三平台 `lib_version` / `mod_version` 由 `1.0.0-SNAPSHOT.6` 统一到 **`1.0.0-SNAPSHOT.10`**（后缀各自 `+neoforge_1.21.1` / `+forge_1.20.1` / `+neoforge_26.1.2`，与消费方 `2.0.0-SNAPSHOT.10` 的 patch 段同号）并已 `publishToMavenLocal`；**库内 Java 源码零改动**。
+- **修复：Forge 1.20.1 加载界面报「File … failed to load a valid ResourcePackInfo」**。现象：消费方 `run/1.20.1` 客户端进入 Forge 的 `Warning while loading mods` 界面，列出 1 条警告并指向库 jar（用户截图与 `latest.log` 均指向 `starengine-forge-1.20.1-1.0.0-SNAPSHOT.5.jar`；`.6` 同样缺该文件，故该警告与快照序号无关），日志对应行 `[net.minecraft.server.packs.repository.Pack/]: Missing metadata in pack mod:starengine`。根因（**读本机 Forge 1.20.1 源码取证**，非推测）：`net.minecraftforge.client.loading.ClientModLoader#clientPackFinder`（行 154-165）对**每一个**模组文件调用 `Pack.readMetaAndCreate(name, …, PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, …)`，返回 `null` 时执行 `ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()))` —— `assets/forge/lang/*.json` 里该键的文案即 `File {2} failed to load a valid ResourcePackInfo`；`Pack.readMetaAndCreate` 在 jar 内**没有 `pack.mcmeta`**（或元数据无法按该 PackType 解析）时返回 null。服务端同源：`net.minecraftforge.server.ServerLifecycleHooks`（行 214）在 `PackType.SERVER_DATA` 上做同一检查。⇒ 凡缺 `pack.mcmeta` 的 Forge 1.20.1 模组 jar 都会各报一条警告，且其资源包**不被注册**（库当前无资源 ⇒ 无功能损失，但属静默失效面）。处置：新增 `forge-1.20.1/src/main/resources/pack.mcmeta`（`pack_format` **15**、`description` = `starengine resources`，与消费方 `forge-1.20.1/src/main/resources/pack.mcmeta` 同形）。**范围仅 Forge 1.20.1**：NeoForge 1.21.1 / 26.1.2 不走这两段代码（两侧运行日志无该警告，消费方三线 jar 也只在 1.20.1 侧带 `pack.mcmeta`），且各版本 `pack_format` 不同，故**不猜测**其余平台的取值（需要时按各自版本客户端源码取值再补）。三平台 `lib_version` / `mod_version` 由 `1.0.0-SNAPSHOT.6` 统一到 **`1.0.0-SNAPSHOT.10`**（后缀各自 `+neoforge_1.21.1` / `+forge_1.20.1` / `+neoforge_26.1.2`，与消费方 `2.0.0-SNAPSHOT.10` 的 patch 段同号）并已 `publishToMavenLocal`；**库内 Java 源码零改动**。
 - **新增配置驱动常量 `ALLOW_FIREARM_DAMAGE`（默认 `false`），供消费方公共配置 `allow_firearm_damage` 推入**。`component/GameplayConstants` 新增**非 final** 的 `public static boolean ALLOW_FIREARM_DAMAGE = false`（默认**仍屏蔽**枪弹/炮弹类伤害，与既有行为完全一致；配置为 `true` 时才允许这类伤害计入法伤），并放在既有的「仍可配置」布尔量一组里（`EVENT_APPLY_OPAC` 之后）；`component/GameplayConfigValues` 在**末尾追加**第 7 个分量 `boolean allowFirearmDamage`（前 6 个分量的名称与顺序**逐字未变**，消费方仍按位置构造，属**源码兼容**的追加）；`applyConfig(GameplayConfigValues)` 在「仅写入仍可配置的少量字段」那一段内写入该值，固定常量派生 tick 值的部分未动。库内仍**不读配置文件、不持有配置 schema**，配置文件与配置项定义照旧留在消费方。三平台 `lib_version` / `mod_version` 由 `1.0.0-SNAPSHOT.11` 统一为 **`1.0.0-SNAPSHOT.12`**（后缀各自 `+neoforge_1.21.1` / `+forge_1.20.1` / `+neoforge_26.1.2`）；必须 bump 的原因同前几版：该版本号不以 `-SNAPSHOT` 结尾（按 Maven 语义属普通版本），Gradle 不把它当作 changing module —— 不 bump 则消费方会继续解析 `mavenLocal` 里那份既没有该常量、也没有第 7 个 record 分量的旧 jar，构造快照时编译期即报错。
 
 ## 1.0.0-SNAPSHOT.6
@@ -403,8 +433,8 @@
 
 ### 工程
 
-- **修复：库自身被 FML 拒载（`loaderVersion` 误用 NeoForge 版本带）**。现象：消费方 `run/1.21.1` 连续两次启动在 FML 阶段崩溃（`crash-2026-09-17_20.41.28-fml.txt` / `…_20.42.17-fml.txt`），报 `Mod File …\starengine_lib-neoforge-1.21.1-1.0.0-SNAPSHOT.5.jar needs language provider javafml:21.1 or above, and below 21.2 to load / We have found 4.0.42`，随后消费方 `astral_dice` 被判 `requires starengine_lib 1.0.0-SNAPSHOT.5 or above … Currently, starengine_lib is not installed`。根因：`neoforge-1.21.1/gradle.properties` 的 `loader_version_range` 曾被写成 **NeoForge 版本带** `[21.1,21.2)`，而模板 `neoforge.mods.toml:2 loaderVersion="${loader_version_range}"` 比的是 **javafml 语言提供者版本**（本机 NeoForge 21.1.235 报 `4.0.42`）。处置：该属性改为语言区间 **`[1,)`**（与消费方 `astral_dice_multiloader-next/neoforge-1.21.1/gradle.properties:23` 同值）；NeoForge 版本带 `[21.1,21.2)` 仍由模板里 `modId="neoforge"` 依赖承担（**区间未变**）。`neoforge-26.1.2` 侧本来就是 `[1,)`（未触发拒载），本次不改其值。
-- **同批：`forge-1.20.1` 门槛对齐已文档化口径 + 三平台版本同步**。`loaderVersion` 由 `[47,)` 收敛为 **`[47,48)`**（javafml 语言提供者的版本号就是 Forge 主系列号 `47`，写完整版本号区间会被 FML 判 `fml.language.missingversion`），`modId="forge"` 依赖改用 `build.gradle` 从 `forge_version` **派生**的精确区间 **`[47.4.10,48)`**（模板占位由 `${loader_version_range}` 改为 `${forge_version_range}`），与消费方 `forge-1.20.1/build.gradle:139-152` 的口径逐条一致。三平台 `lib_version` / `mod_version` 由 `1.0.0-SNAPSHOT.5` → **`1.0.0-SNAPSHOT.6`**（后缀各自 `+neoforge_1.21.1` / `+forge_1.20.1` / `+neoforge_26.1.2`）并已 `publishToMavenLocal`（产物落在 `~/.m2/repository/com/merlinkitsune/starenginelib/<artifact>/1.0.0-SNAPSHOT.6/`）；开包断言三个 jar 的 `loaderVersion` 分别为 `[1,)` / `[47,48)` / `[1,)`、forge 依赖 `versionRange="[47.4.10,48)"`，`neoforge` / `minecraft` 依赖区间未变。**库内 Java 源码零改动**（只改元数据、模板注释与文档）；消费方引脚与 CI ref 由消费方侧同步，不在本次范围。
+- **修复：库自身被 FML 拒载（`loaderVersion` 误用 NeoForge 版本带）**。现象：消费方 `run/1.21.1` 连续两次启动在 FML 阶段崩溃（`crash-2026-09-17_20.41.28-fml.txt` / `…_20.42.17-fml.txt`），报 `Mod File …\starengine-neoforge-1.21.1-1.0.0-SNAPSHOT.5.jar needs language provider javafml:21.1 or above, and below 21.2 to load / We have found 4.0.42`，随后消费方 `astral_dice` 被判 `requires starengine 1.0.0-SNAPSHOT.5 or above … Currently, starengine is not installed`。根因：`neoforge-1.21.1/gradle.properties` 的 `loader_version_range` 曾被写成 **NeoForge 版本带** `[21.1,21.2)`，而模板 `neoforge.mods.toml:2 loaderVersion="${loader_version_range}"` 比的是 **javafml 语言提供者版本**（本机 NeoForge 21.1.235 报 `4.0.42`）。处置：该属性改为语言区间 **`[1,)`**（与消费方 `astral_dice_multiloader-next/neoforge-1.21.1/gradle.properties:23` 同值）；NeoForge 版本带 `[21.1,21.2)` 仍由模板里 `modId="neoforge"` 依赖承担（**区间未变**）。`neoforge-26.1.2` 侧本来就是 `[1,)`（未触发拒载），本次不改其值。
+- **同批：`forge-1.20.1` 门槛对齐已文档化口径 + 三平台版本同步**。`loaderVersion` 由 `[47,)` 收敛为 **`[47,48)`**（javafml 语言提供者的版本号就是 Forge 主系列号 `47`，写完整版本号区间会被 FML 判 `fml.language.missingversion`），`modId="forge"` 依赖改用 `build.gradle` 从 `forge_version` **派生**的精确区间 **`[47.4.10,48)`**（模板占位由 `${loader_version_range}` 改为 `${forge_version_range}`），与消费方 `forge-1.20.1/build.gradle:139-152` 的口径逐条一致。三平台 `lib_version` / `mod_version` 由 `1.0.0-SNAPSHOT.5` → **`1.0.0-SNAPSHOT.6`**（后缀各自 `+neoforge_1.21.1` / `+forge_1.20.1` / `+neoforge_26.1.2`）并已 `publishToMavenLocal`（产物落在 `~/.m2/repository/com/merlinkitsune/starengine/<artifact>/1.0.0-SNAPSHOT.6/`）；开包断言三个 jar 的 `loaderVersion` 分别为 `[1,)` / `[47,48)` / `[1,)`、forge 依赖 `versionRange="[47.4.10,48)"`，`neoforge` / `minecraft` 依赖区间未变。**库内 Java 源码零改动**（只改元数据、模板注释与文档）；消费方引脚与 CI ref 由消费方侧同步，不在本次范围。
 
 ## 1.0.0-SNAPSHOT.5
 
@@ -415,7 +445,7 @@
 
 - **过渡符号按期删除（已删部分）**：删除前**逐符号 grep 举证**合并后消费方三线（`neoforge-1.21.1` / `forge-1.20.1` / `neoforge-26.1.2`）零引用，然后删除 ①`EventTargetCollector` 的 `collectTargets` / `collectTeamTargets` / `collectMaids` / `isMaidOwnedBy`（含其 `GameplayConstants.EVENT_RANGE` / `EVENT_APPLY_MAID` 分支）、②`GameplayConstants.KOMACHI_EXTRA_PLAYS_CAP`、③`effect/ReadyEffect`（`.4` 才下沉、合并后三线零引用）。判定要点：`collectTargets` 的 6 处 grep 命中全部是消费方 `RandomCardHandler` 自己的同名方法（不同类、不同签名），库侧方法确为 0 引用；`EVENT_APPLY_MC_TEAM` / `EVENT_APPLY_FTB_TEAM` / `EVENT_APPLY_OPAC` 与 `EventTargetCollector.collectTeamPlayers` 是**在用**能力（消费方多处调用），原样保留。命令与输出见 `temp/t5-cleanup-notes-20260917.md`。
 - **过渡符号按期删除（同批完成）——事件框架三件套**：`event/AstralEventType` / `EventContext` / `EventEffect` 三个文件整体删除（三者互相引用：`AstralEventType(ResourceLocation, EventEffect)` 与 `EventEffect.apply(EventContext)`、`AstralEventType.trigger(EventContext)`，必须同批删），并移除 `neoforge-26.1.2/build.gradle` 里专为 `AstralEventType` 留的 `sourceSets.main.java.exclude` 行（文件已删，该行只会变成无效残留）。**前提工序**：合并后的消费方 `event/AstralEventSystem.java` 曾在 import 段留下 4 处指向本库的 `import`（方法体已不用，但未解析的 import 就是编译错误），先由消费方侧提交 `7dc64cb` 清掉，库侧才可删除；此后 `git grep -E 'AstralEventType|EventContext|EventEffect' -- '*.java'` 在消费方三线为 **0 命中**。⚠️ 由于这一前提在 `.5` 首次发布之后才满足，`.5` 的库字节**重新发布过**（同版本号、不同字节）——消费方必须以 `--refresh-dependencies`（或清 mavenLocal 缓存）重新解析，否则会继续用带三件套的旧 `.5` 字节。
-- **版本与消费方同步**：库版本 `1.0.0-SNAPSHOT.4 → 1.0.0-SNAPSHOT.5`（三个平台 `gradle.properties` 同号）；dev-next 两侧 `starengine_lib_version` 与 `starengine_lib_version_range`（两个 `mods.toml` 经 `${starengine_lib_version_range}` 展开）同步到 `[1.0.0-SNAPSHOT.5,2.0)`；消费方 CI 钉住的库检出 `ref` 换成 `.5` 删除三件套后的库提交 sha，并在注释里写明「库版本 bump 必须与本 ref 同一次提交更新」。⚠️ 库仓库目前**尚未 push**，该 sha 仅存在于本机，CI 检出会失败直到库被推送且该 sha 可达。
+- **版本与消费方同步**：库版本 `1.0.0-SNAPSHOT.4 → 1.0.0-SNAPSHOT.5`（三个平台 `gradle.properties` 同号）；dev-next 两侧 `starengine_version` 与 `starengine_version_range`（两个 `mods.toml` 经 `${starengine_version_range}` 展开）同步到 `[1.0.0-SNAPSHOT.5,2.0)`；消费方 CI 钉住的库检出 `ref` 换成 `.5` 删除三件套后的库提交 sha，并在注释里写明「库版本 bump 必须与本 ref 同一次提交更新」。⚠️ 库仓库目前**尚未 push**，该 sha 仅存在于本机，CI 检出会失败直到库被推送且该 sha 可达。
 
 ## 1.0.0-SNAPSHOT.4
 
@@ -424,14 +454,14 @@
 
 ### 新内容
 
-- **`effect/ReadyEffect` 下沉进库**：该类在三线（`neoforge-1.21.1` / `forge-1.20.1` / `neoforge-26.1.2`）各有一份且**字节完全一致**，只 import 原版 `MobEffect` / `MobEffectCategory`，不引用任何消费方专有类 —— 是本轮按「三线字节一致 + 自包含」口径筛出的 53 个候选里**唯一尚未进库**者（其余 52 个已在前序 Phase 下沉或按原因排除，见「工程」）。下沉后位于 `common/src/main/java/com/merlinkitsune/starenginelib/effect/ReadyEffect.java`（14 行 / 540 字节），与原文件逐字节相同、仅 `package` 一行改为库包名，行尾保持 CRLF 不变。
+- **`effect/ReadyEffect` 下沉进库**：该类在三线（`neoforge-1.21.1` / `forge-1.20.1` / `neoforge-26.1.2`）各有一份且**字节完全一致**，只 import 原版 `MobEffect` / `MobEffectCategory`，不引用任何消费方专有类 —— 是本轮按「三线字节一致 + 自包含」口径筛出的 53 个候选里**唯一尚未进库**者（其余 52 个已在前序 Phase 下沉或按原因排除，见「工程」）。下沉后位于 `common/src/main/java/com/merlinkitsune/starengine/effect/ReadyEffect.java`（14 行 / 540 字节），与原文件逐字节相同、仅 `package` 一行改为库包名，行尾保持 CRLF 不变。
 
 ### 工程
 
 - **三线共享类的下沉判定口径固化**（清单：`temp/sink-manifest-20260917.md`）：候选闸门 = 「三个子项目同相对路径的 java 文件 Sha256 完全相同」（三线共 229 个 java 文件 → 候选 53 个）；自包含闸门 = 「引用闭包只落在候选集 ∪ 库内已有类 ∪ Minecraft/加载器 API」。排除项逐条列明并给出原因：非三线一致（176 个）、依赖消费方专有类（如 `ModItems` / `ModAttachments` / `BaseChipItem` / `DiceCombatModifiers` / `SpellDamageRegistry`）、以及 3 个 mixin（`mixin/trade/Merchant{Container,Menu,ResultSlot}Mixin`，需要 mixin 配置与 refmap，库内无此基建）。
 - **合并前漂移核对（本次据此判定「不需再改这些类」）**：dev-next 已删除、而主线在删除之后又改过的库同源副本逐条比对 —— `component/GameplayConstants` 的常量改动（`MAX_MARKER` 16→32、`HAND_FAN_BIG_RANGE` 转 `final`、`MAX_STARLIGHT`/`EFFECT_CARD_COOLDOWN_SECONDS`/`MAX_EFFECT_STACKS` 转 `final` 等）库内**已取主线值**，两侧差异只剩「库用值快照 seam、主线用 `ModCommonConfig`」与按既有约定暂留的过渡符号（`EVENT_RANGE` / `EVENT_APPLY_MAID` / `KOMACHI_EXTRA_PLAYS_CAP` / `TARGET_SELECT_RADIUS`）；`event/EventTargetCollector` 库内**暂留全量实现**（合并前消费方仍在调用 `collectTargets(...)`）；`item/BossEntityUtil`、`event/SignActiveTriggeredEvent`、`event/ModEffectRemoval`、`client/ActionBarManager`（三个平台各一份）的差异全部是 shim 基类与注释。⇒ 主线这批改动不会在合并中丢失。
-- **`common` 内两处消费方包名残留已清除**：`effect/HealingEffect` 与 `event/AmethystDiceHandler` 的 javadoc 里还留着 `{@link com.merlinkitsune.astral_dice.item.HealingManager}` 与 `{@link com.merlinkitsune.astral_dice.combat.SpellDamageRegistry}` —— 上一轮的包名重构只把 `starengine` 段换成 `starenginelib`，消费方包名被原样留下，不影响编译但违反「`common` 不得出现消费方专有类引用」的验收口径。改为纯文本描述，功能与签名零改动；清理后**全库（含三个平台子项目）对 `com.merlinkitsune.astral_dice` 的引用为 0**。
-- **消费方区间下界抬到 `1.0.0-SNAPSHOT.4`**：dev-next worktree 两个 `gradle.properties` 的 `starengine_lib_version` 与 `starengine_lib_version_range` 已同步，两侧 `mods.toml` 经 `${starengine_lib_version_range}` 展开后同为新区间。语义与 `.3` 同构（同为「精确下界」）：`[1.0.0-SNAPSHOT.4,2.0)` 拒绝 `.1` / `.2` / `.3`，接受 `.4` / `.10` / `1.0.0` / `1.1.0`，仍拒绝 `2.0.0`。
+- **`common` 内两处消费方包名残留已清除**：`effect/HealingEffect` 与 `event/AmethystDiceHandler` 的 javadoc 里还留着 `{@link com.merlinkitsune.astral_dice.item.HealingManager}` 与 `{@link com.merlinkitsune.astral_dice.combat.SpellDamageRegistry}` —— 上一轮的包名重构只把 `starengine` 段换成 `starengine`，消费方包名被原样留下，不影响编译但违反「`common` 不得出现消费方专有类引用」的验收口径。改为纯文本描述，功能与签名零改动；清理后**全库（含三个平台子项目）对 `com.merlinkitsune.astral_dice` 的引用为 0**。
+- **消费方区间下界抬到 `1.0.0-SNAPSHOT.4`**：dev-next worktree 两个 `gradle.properties` 的 `starengine_version` 与 `starengine_version_range` 已同步，两侧 `mods.toml` 经 `${starengine_version_range}` 展开后同为新区间。语义与 `.3` 同构（同为「精确下界」）：`[1.0.0-SNAPSHOT.4,2.0)` 拒绝 `.1` / `.2` / `.3`，接受 `.4` / `.10` / `1.0.0` / `1.1.0`，仍拒绝 `2.0.0`。
 
 ## 1.0.0-SNAPSHOT.3
 
@@ -440,11 +470,11 @@
 
 ### 破坏性变更
 
-- **Java 包名 `com.merlinkitsune.starengine` → `com.merlinkitsune.starenginelib`，Maven `groupId` 随之迁移。** 只在「这是包名」的位置把 `starengine` 段替换为 `starenginelib`：`package` / `import` 语句、javadoc `{@link}` 目标、三个源码目录（`common`、`neoforge-1.21.1`、`forge-1.20.1`）与两侧 `gradle.properties` 的 `mod_group_id` —— 共 50 个文件、69 处，另加发布用 `groupId`（`com.merlinkitsune.starengine` → `com.merlinkitsune.starenginelib`）。**有意保持不变**的：mod id `starengine_lib`、显示名 `StarEngine Lib`、全部 `StarEngine*` 类名，以及所有历史记录（旧 CHANGELOG 条目、`docs/starengine-lib/`、一次性脚本 `tools/migrate_to_starengine_lib.py`）。本次改名**在同一版本号上二进制不兼容** —— 改名前的 `.1` jar 与本 `.2` jar 拥有完全相同的 `modId` 与相同的 MC 版本后缀，但类名不同 —— 因此消费方必须同时抬高区间下界（见下方「工程」）。替换为字面量、字节级（`starengine(?![A-Za-z0-9_])`，大小写敏感），故 `starengine_lib`（mod id）、`starenginelib`（新包名）、`StarEngine`（品牌/类名前缀）均不可能被命中；且保留原行尾，diff 严格「一处一行」，无 CRLF/LF 噪音。改名后以开包方式核对：两个平台 jar 分别 45（neoforge）/ 47（forge）个 class，类路径与常量池中**旧包名 0 处**；对仓库（含二进制）的全字节扫描同样 0 处真引用。若某消费方产物把库的全限定类名以**字符串**形式配对（Mixin 配置指向 `com.merlinkitsune.starengine.*`、混淆映射、反射或代码生成），也必须同步改写；本仓库已无此类引用。客户端可见影响：无。
+- **Java 包名 `com.merlinkitsune.starengine` → `com.merlinkitsune.starengine`，Maven `groupId` 随之迁移。** 只在「这是包名」的位置把 `starengine` 段替换为 `starengine`：`package` / `import` 语句、javadoc `{@link}` 目标、三个源码目录（`common`、`neoforge-1.21.1`、`forge-1.20.1`）与两侧 `gradle.properties` 的 `mod_group_id` —— 共 50 个文件、69 处，另加发布用 `groupId`（`com.merlinkitsune.starengine` → `com.merlinkitsune.starengine`）。**有意保持不变**的：mod id `starengine`、显示名 `StarEngine`、全部 `StarEngine*` 类名，以及所有历史记录（旧 CHANGELOG 条目、`docs/starengine-lib/`、一次性脚本 `tools/migrate_to_starengine.py`）。本次改名**在同一版本号上二进制不兼容** —— 改名前的 `.1` jar 与本 `.2` jar 拥有完全相同的 `modId` 与相同的 MC 版本后缀，但类名不同 —— 因此消费方必须同时抬高区间下界（见下方「工程」）。替换为字面量、字节级（`starengine(?![A-Za-z0-9_])`，大小写敏感），故 `starengine`（mod id）、`starengine`（新包名）、`StarEngine`（品牌/类名前缀）均不可能被命中；且保留原行尾，diff 严格「一处一行」，无 CRLF/LF 噪音。改名后以开包方式核对：两个平台 jar 分别 45（neoforge）/ 47（forge）个 class，类路径与常量池中**旧包名 0 处**；对仓库（含二进制）的全字节扫描同样 0 处真引用。若某消费方产物把库的全限定类名以**字符串**形式配对（Mixin 配置指向 `com.merlinkitsune.starengine.*`、混淆映射、反射或代码生成），也必须同步改写；本仓库已无此类引用。客户端可见影响：无。
 
 ### 新内容
 
-- 首次从 Astral Dice 1.20.1 / 1.21.1 多加载器单仓中提取出 **StarEngine Lib**（`starengine_lib`）：将两个 MC 版本可共同引用的 34 个共享单元（18 个 `MobEffect` 实现、`AstralEventType`/`EventContext`/`EventEffect`/`EventTargetCollector` 事件框架、目标选择框架、`BossEntityUtil`、`ClientDamageNumbers`、`GameplayConstants`、`SignActiveTriggeredEvent`、`AmethystDiceHandler`）下沉至本库，供后续 **Astral Dice Extra（星之骰戏：扩展）** 及同系列模组复用。
+- 首次从 Astral Dice 1.20.1 / 1.21.1 多加载器单仓中提取出 **StarEngine**（`starengine`）：将两个 MC 版本可共同引用的 34 个共享单元（18 个 `MobEffect` 实现、`AstralEventType`/`EventContext`/`EventEffect`/`EventTargetCollector` 事件框架、目标选择框架、`BossEntityUtil`、`ClientDamageNumbers`、`GameplayConstants`、`SignActiveTriggeredEvent`、`AmethystDiceHandler`）下沉至本库，供后续 **Astral Dice Extra（星之骰戏：扩展）** 及同系列模组复用。
 - 本库**不注册任何**注册表条目（物品/效果/附件/数据组件/能力全部留在消费方 mod）。因此引入或升级本库都不会改变任何 `ResourceLocation` 归属，既不损坏存档，也不破坏数据包。
 - 提供**平台无关的配置值 seam**：`GameplayConfigValues`（纯值快照 record）与 `GameplayConstants.applyConfig(...)`。配置文件与配置读写**不进库** —— `ModConfigSpec`（NeoForge）与 `ForgeConfigSpec`（Forge）不通用，故配置项定义、TOML 读写与配置屏幕全部留在消费方 mod，库只声明「哪些玩法数值可配置」以及如何应用。消费方在自己的配置加载/重载回调里构造快照并推送，**改完配置不需重启**（`GameplayConstants` 字段是非 final 的运行时读取）。
 
@@ -458,9 +488,9 @@
 - **配置不进库（值快照 seam）**：`ModConfigSpec`（NeoForge）与 `ForgeConfigSpec`（Forge）不通用，配置文件的读写与配置 GUI 只能各平台自己做，因此库内**不持有配置 schema、不读配置文件、不提供配置屏幕**，只保留平台无关的 `GameplayConfigValues`（纯 record 值快照）与 `GameplayConstants.applyConfig(...)`；消费方注册自己的配置后，把当前值装进快照推送即可热生效。record 字段即契约 —— 消费方按**位置**构造该 record，增删/改序字段会让消费方在**编译期**失败（这正是刻意选择 record 而非松散 getter 集合的原因）。由此 `common` 中既无加载器字面量、也无任何第三方配置库依赖，库的必需前置只剩加载器本身（Forge 侧另有 Curios）。
 - **版本号 bump 到 `1.0.0-SNAPSHOT.3`（必须）**：本次删除库内公共配置模块与事件框架类、并收敛 `GameplayConfigValues` 字段，属二进制不兼容变更；而该版本号不以 `-SNAPSHOT` 结尾（按 Maven 语义属普通版本），Gradle 不会把它当作 changing module —— 不 bump 则消费方会继续解析 `mavenLocal` 里的 `.2` 旧 jar，随后在编译期报「找不到符号」。
 - **Maven 发布**：NeoForge 侧 `from components.java` 发布普通 Mojmap jar（NeoForge 自 1.20.5 起编译与生产同为 Mojmap，无需重映射）；Forge 1.20.1 侧发布 `reobfJar`，即**生产 SRG jar** —— 消费方 MDG LegacyForge 会在解析期把 SRG jar 重映射为 dev Mojmap 命名，若发布未重混淆的 dev jar，生产环境会因成员名为 Mojmap 而 `NoSuchFieldError`。两侧均显式指定 `artifactId`，使坐标与 `archivesName` 一致。
-- **build 自动部署**：`build` 结束后 `pushToPack` 会把库 jar 复制进两个整合包的 `mods` 目录（Forge 测试包推 SRG jar、NeoForge 包推普通 jar），与消费方既有的「build 即部署」约定一致。此步不可省略：消费方把 `starengine_lib` 声明为必需前置，库 jar 不在包内会导致整合包直接拒绝启动。⚠️ **自 2026-09-12 起，开发分支上不再推送 —— `main` 已在豁免名单中。** 本库与消费方必须以**成对匹配**的版本一起进整合包（消费方既在编译期锁定库版本，又在 `mods.toml` 声明库版本区间），只要一侧单独前进，整合包就会带着不匹配的组合在启动期以 `NoClassDefFoundError` 或「缺失必需前置」崩溃。消费方已在其开发分支 `multi-dev-next` 上停推，故本库同步在 `main` 上停推，让整合包冻结在最后一个匹配的组合上，而不是被单侧覆盖。守卫在**执行期**读 `.git/HEAD` 判定当前分支（对 configuration-cache 友好、切分支立即生效），并兼容两种形态 —— 普通仓库的 `.git` 目录，以及 worktree 下作为**文件**、内容为 `gitdir: <path>` 的 `.git`；无法确定分支时（detached HEAD、无 `.git`，如 CI）同样跳过，取安全侧。`-PdeployToPack` / `-PpackPush` 仍可强制推送（手动出包用）—— 使用时请把消费方 jar 一并推送，保持成对。
-- **托管到 GitHub，并配上独立 CI 与 Release**：仓库现位于 <https://github.com/merlin-kitsune/starengine_lib>，新增 `.github/workflows/build.yml`，沿用 Astral Dice 的发布规范：每次 push / PR / 手动触发均以 JDK 21 + JDK 17 构建双平台，并上传 `starengine_lib-jars` 构建产物；push 到 `main` 自动打 tag（tag = 基础版本号，无 `v` 前缀、无 `+加载器` 后缀）；push tag 则创建/更新 GitHub Release，附件为两个平台的 jar。相较消费方规则**多加一道守卫**：版本号含 `-`（即快照）时**不打 tag**，否则 `1.0.0-SNAPSHOT.1` 会被截成 `1.0.0` 并被当成正式发布自动打出，且 tag 难以回收。另修复了 `gradlew` 在 git 索引中丢失的可执行位（`100644` → `100755`）：仓库自 Windows 提交，wrapper 不带执行权限，Runner 上 `./gradlew` 在 Gradle 启动前就因 `Permission denied`（exit 126）退出；又因消费方 CI 需先 checkout 本库，这一个缺陷会同时打红**两个**仓库的 Action。
+- **build 自动部署**：`build` 结束后 `pushToPack` 会把库 jar 复制进两个整合包的 `mods` 目录（Forge 测试包推 SRG jar、NeoForge 包推普通 jar），与消费方既有的「build 即部署」约定一致。此步不可省略：消费方把 `starengine` 声明为必需前置，库 jar 不在包内会导致整合包直接拒绝启动。⚠️ **自 2026-09-12 起，开发分支上不再推送 —— `main` 已在豁免名单中。** 本库与消费方必须以**成对匹配**的版本一起进整合包（消费方既在编译期锁定库版本，又在 `mods.toml` 声明库版本区间），只要一侧单独前进，整合包就会带着不匹配的组合在启动期以 `NoClassDefFoundError` 或「缺失必需前置」崩溃。消费方已在其开发分支 `multi-dev-next` 上停推，故本库同步在 `main` 上停推，让整合包冻结在最后一个匹配的组合上，而不是被单侧覆盖。守卫在**执行期**读 `.git/HEAD` 判定当前分支（对 configuration-cache 友好、切分支立即生效），并兼容两种形态 —— 普通仓库的 `.git` 目录，以及 worktree 下作为**文件**、内容为 `gitdir: <path>` 的 `.git`；无法确定分支时（detached HEAD、无 `.git`，如 CI）同样跳过，取安全侧。`-PdeployToPack` / `-PpackPush` 仍可强制推送（手动出包用）—— 使用时请把消费方 jar 一并推送，保持成对。
+- **托管到 GitHub，并配上独立 CI 与 Release**：仓库现位于 <https://github.com/merlin-kitsune/starengine>，新增 `.github/workflows/build.yml`，沿用 Astral Dice 的发布规范：每次 push / PR / 手动触发均以 JDK 21 + JDK 17 构建双平台，并上传 `starengine-jars` 构建产物；push 到 `main` 自动打 tag（tag = 基础版本号，无 `v` 前缀、无 `+加载器` 后缀）；push tag 则创建/更新 GitHub Release，附件为两个平台的 jar。相较消费方规则**多加一道守卫**：版本号含 `-`（即快照）时**不打 tag**，否则 `1.0.0-SNAPSHOT.1` 会被截成 `1.0.0` 并被当成正式发布自动打出，且 tag 难以回收。另修复了 `gradlew` 在 git 索引中丢失的可执行位（`100644` → `100755`）：仓库自 Windows 提交，wrapper 不带执行权限，Runner 上 `./gradlew` 在 Gradle 启动前就因 `Permission denied`（exit 126）退出；又因消费方 CI 需先 checkout 本库，这一个缺陷会同时打红**两个**仓库的 Action。
 - **前置版本区间下界必须是 `1.0.0-SNAPSHOT` 而非 `1.0`**：按 Maven `ComparableVersion` 语义 `1.0.0-SNAPSHOT.1 < 1.0`，消费方若写 `versionRange="[1.0,2.0)"` 会拒绝所有 `1.0.0-SNAPSHOT.x`，游戏直接以「不满足必需前置」拒绝加载。已用 `maven-artifact` 3.8.5 实测（两侧加载器均经 `MavenVersionAdapter.createFromVersionSpec` → `VersionRange.createFromVersionSpec`）：`[1.0,2.0)` 不含 `1.0.0-SNAPSHOT.1`，而 `[1.0.0-SNAPSHOT,2.0)` 连同 `1.0.0` / `1.1.0` 一并包含。下界还须精确到快照序号（当前为 `.2`，见下一条），否则区间过宽、挡不住同坐标的旧 jar。
 - **消费方必须把区间下界抬到 `1.0.0-SNAPSHOT.3`**：相邻快照之间是**二进制不兼容**的（`.1` → `.2` 改包名；`.2` → `.3` 删除库内公共配置模块、收敛 `GameplayConfigValues` 字段并删除事件框架类），而旧 jar 的 `modId` 与版本号形态完全相同、只差 patch 段，故宽松区间（如 `[1.0.0-SNAPSHOT,2.0)`）会把残留的旧 jar 一并放行 —— `.1` 会在运行期以 `NoClassDefFoundError: com/merlinkitsune/starengine/...` 崩溃，`.2` 会在编译期因找不到 `StarEngineConfigs` 等已删除的类而失败。`[1.0.0-SNAPSHOT.3,2.0)` 拒绝 `.1` / `.2`，同时接受 `.3` / `.10` / `1.0.0` / `1.1.0`，并照旧拒绝 `2.0.0`。已用 `maven-artifact` 3.8.5 按三区间 × 七版本实测（`[1.0.0-SNAPSHOT.2,2.0)` 拒绝 `.1`、接受 `.2`/`.3`/`.10`/`1.0.0`/`1.1.0`、拒绝 `2.0.0`；三者同为「精确下界」语义，故把下界换成 `.3` 的行为与之完全同构）；注意 `.10` 是按**数值**而非字典序比较，故两位数的 patch 段不会掉出区间。
-- **消费方 CI 改为先构建本库**：本库仅发布到 `mavenLocal`，故 Astral Dice 的 `build.yml` 会先 checkout 本仓并执行 `./gradlew publishToMavenLocal`，再构建自身。因此两个仓库的版本号必须严格对齐（消费方的 `starengine_lib_version` ↔ 本库的 `lib_version`），否则消费方 CI 会断在依赖解析。
+- **消费方 CI 改为先构建本库**：本库仅发布到 `mavenLocal`，故 Astral Dice 的 `build.yml` 会先 checkout 本仓并执行 `./gradlew publishToMavenLocal`，再构建自身。因此两个仓库的版本号必须严格对齐（消费方的 `starengine_version` ↔ 本库的 `lib_version`），否则消费方 CI 会断在依赖解析。
 - **26.1 的两处平台差异下沉进 shim**：① 标识符类由 `net.minecraft.resources.ResourceLocation` 改名为 `Identifier`（1.20.1 / 1.21.1 仍用旧名）；② `EntityType#is(TagKey)` 被移除，须经 `builtInRegistryHolder()`。② 由 `platform/LoaderTags#isBoss(Entity)` 吸收（共享源码 `BossEntityUtil` 只调用该 shim，不感知版本差异），26.1.2 侧的 `LoaderTags` 另改用 `TagKey.create` 直接构造 `c:bosses`，不依赖随版本漂移的平台 Tags 常量；① 因 Java 无类型别名，唯一直接用旧名的 `common/event/AstralEventType` 被 `sourceSets.main.java.exclude` 排除在 26.1.2 编译之外（它与其同族在消费方主线已删除，本库也只是暂留）。

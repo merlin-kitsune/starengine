@@ -150,7 +150,7 @@ jobs:
           # 说明正文写进临时文件后用 --notes-file 传入(与消费方同一做法)
           NOTES_FILE="$RUNNER_TEMP/starengine-lib-release-notes-$TAG.md"
           {
-            printf '## StarEngine Lib %s\n\n' "$TAG"
+            printf '## StarEngine %s\n\n' "$TAG"
             printf '构建版本 / build version: `%s`\n\n' "$BUILT"
             printf '> ⚠️ **本仓库不分发任何 jar —— 此处只有上方 GitHub 自动生成的源码归档。**\n'
             printf '> This repository ships **no jars** — only the automatic source archives above.\n\n'
@@ -162,7 +162,7 @@ jobs:
           } > "$NOTES_FILE"
           echo "release notes: $(wc -c < "$NOTES_FILE") bytes"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "StarEngine Lib $TAG" --notes-file "$NOTES_FILE"
+            gh release edit "$TAG" --title "StarEngine $TAG" --notes-file "$NOTES_FILE"
             # 自愈:清掉该 Release 上一切 jar 附件(历史遗留 / 误传都在此被删)。
             gh release view "$TAG" --json assets -q '.assets[].name' > "$RUNNER_TEMP/assets.txt" || true
             while IFS= read -r name; do
@@ -180,7 +180,7 @@ jobs:
           else
             # 注意:**不带任何附件** —— Release 因此只含源码归档。
             gh release create "$TAG" \
-              --title "StarEngine Lib $TAG" \
+              --title "StarEngine $TAG" \
               --notes-file "$NOTES_FILE" \
               --latest
           fi
