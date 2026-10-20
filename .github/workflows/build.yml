@@ -123,14 +123,13 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create/Update GitHub Release (source code only — no JAR assets)
-        # ⚠️ 2026-10-01 政策变更(用户裁决):**本库不再对外分发任何 jar,只保留源码。**
-        #    原因:本库自 2026-09-24 起由消费方 `astral_dice` 以 JarJar 内嵌携带;FML 的 JarInJar
-        #    选择器按 **modId** 去重 —— 玩家/整合包作者若另下了一份独立库 jar,那一份会被优先采用,
-        #    版本比内嵌件旧时表现为 `NoSuchMethodError` / `NoClassDefFoundError`,且**极难定位**
-        #    (现象与「库没随模组更新」完全相同;详见 README §4.3)。
-        #    ⇒ 与其在下载页上写「请勿单独安装」,不如**根本不提供下载**:Release 只保留 GitHub
-        #    自动生成的源码归档(Source code (zip) / (tar.gz));jar 一律不上传,且**发现 jar 附件即
-        #    删除**(自愈 —— 历史遗留或误传都能被这一步清掉,重复执行幂等)。
+        # ⚠️ 2026-10-20 政策变更(用户裁决):**GitHub Release 仍只放源码归档,jar 改由商店分发。**
+        #    背景:消费方 `astral_dice` 自 2026-10-20 起,`neoforge-1.21.1` / `forge-1.20.1` 两线
+        #    **不再用 JarJar 内嵌本库** —— 玩家必须单独安装对应平台 jar;`neoforge-26.1.2` /
+        #    `fabric-1.20.1` 两线仍内嵌(待后续批次迁移)。旧政策「请勿单独安装」对前两线已作废。
+        #    ⇒ jar 的**唯一分发渠道** = Modrinth(项目 2dIXA5wO)与 CurseForge(项目 1755415);
+        #    GitHub Release 保持 source-only(避免同一产物出现第二个事实源),并继续**删除任何 jar
+        #    附件**(自愈:历史遗留或误传都能被清掉,重复执行幂等)。
         # 发布 Release 的两种来源(均在**同一个 job 内**完成):
         #   ① main 分支 push:用上一步新建/已存在的 tag;
         #   ② ref 本身就是 tag(tag push,或对 tag 手动 workflow_dispatch 补发):直接用 GITHUB_REF 的 tag。
@@ -152,12 +151,15 @@ jobs:
           {
             printf '## StarEngine %s\n\n' "$TAG"
             printf '构建版本 / build version: `%s`\n\n' "$BUILT"
-            printf '> ⚠️ **本仓库不分发任何 jar —— 此处只有上方 GitHub 自动生成的源码归档。**\n'
+            printf '> ⚠️ **本仓库不分发 jar —— 此处只有上方 GitHub 自动生成的源码归档。**\n'
             printf '> This repository ships **no jars** — only the automatic source archives above.\n\n'
-            printf '本库是 **Astral Dice（星之骰戏）** 的必需前置,但**无需、也不应单独安装**:消费方模组已用 JarJar 把本库内嵌在自身 jar 内,加载器启动时自动载入。\n'
-            printf '⛔ **请勿**再往 `mods/` 放独立库 jar —— 加载器按 modId 去重时会优先采用那一份,版本比内嵌件旧时表现为 `NoSuchMethodError` / `NoClassDefFoundError`。\n\n'
-            printf 'This library is a **required prerequisite of Astral Dice**, but needs **no separate install**: the consumer mod embeds it via JarJar and the loader picks it up at startup.\n'
-            printf '⛔ Do **not** drop a standalone library jar into `mods/` — the loader de-duplicates by modId and prefers that copy, and an older one shows up as `NoSuchMethodError` / `NoClassDefFoundError`.\n\n'
+            printf '**jar 下载请到 Modrinth(项目 `2dIXA5wO`)或 CurseForge(项目 `1755415`)。**\n\n'
+            printf 'Jars are published on **Modrinth (project `2dIXA5wO`)** and **CurseForge (project `1755415`)**.\n\n'
+            printf '本库是 **Astral Dice(星之骰戏)** 的必需前置,按消费方版本分两种情况:\n'
+            printf '%s\n' '- **NeoForge 1.21.1 / Forge 1.20.1**:自 2026-10-20 起**不再内嵌**,必须把 `starengine-neoforge-1.21.1-<版本>.jar` 或 `starengine-forge-1.20.1-<版本>.jar` 与模组一起放进 `mods`;'
+            printf '%s\n' '- **NeoForge 26.1.2 / Fabric 1.20.1**:目前**仍然内嵌**,这两条线**不要**再放独立库 jar(加载器按 modId 去重,旧副本会盖掉内嵌件)。'
+            printf '\n'
+            printf 'StarEngine is required by Astral Dice. **The NeoForge 1.21.1 and Forge 1.20.1 builds no longer embed it** (since 2026-10-20): install the matching platform jar next to the mod. **The NeoForge 26.1.2 and Fabric 1.20.1 builds still embed it**: do not add a standalone jar for those two lines.\n\n'
             printf '开发者接入(自行 `clone` + `./gradlew publishToMavenLocal`)见 README §4;兼容性契约见 README §6 —— 自 `1.0.0` 起,同一主版本号内不做破坏性更新。\n'
           } > "$NOTES_FILE"
           echo "release notes: $(wc -c < "$NOTES_FILE") bytes"
