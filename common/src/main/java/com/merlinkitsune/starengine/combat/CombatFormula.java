@@ -39,8 +39,8 @@ package com.merlinkitsune.starengine.combat;
  */
 public final class CombatFormula {
 
-    /** 玩家侧起始防御力。 */
-    public static final double PLAYER_BASE_DEFENSE = 4.0;
+    /** 玩家侧起始防御力(用户裁决 2026-10-21:2 点 = 1 面盾;原为 4 点)。 */
+    public static final double PLAYER_BASE_DEFENSE = 2.0;
     /** 玩家侧护甲值 → 防御力的系数。 */
     public static final double PLAYER_ARMOR_COEF = 0.30;
     /** 玩家侧盔甲韧性系数。 */
