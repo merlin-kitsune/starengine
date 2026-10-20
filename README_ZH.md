@@ -110,10 +110,10 @@ GameplayConstants.applyConfig(GameplayConfigValues)   -> @Mod 构造期注册配
 
 | 平台 | 坐标 | 发布产物 |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.1` | `jar`（Mojmap，无需重映射） |
-| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.1` | `reobfJar`（**生产 SRG jar**） |
-| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.1` | `jar`（Mojmap，无需重映射） |
-| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.1` | `remapJar`（**生产 intermediary jar**） |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.2` | `jar`（Mojmap，无需重映射） |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.2` | `reobfJar`（**生产 SRG jar**） |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.2` | `jar`（Mojmap，无需重映射） |
+| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.2` | `remapJar`（**生产 intermediary jar**） |
 
 四平台共用同一个 `lib_version`。升版时四份 `gradle.properties` 一起改；`mod_version` 保留各自的平台后缀。
 
@@ -127,25 +127,25 @@ GameplayConstants.applyConfig(GameplayConfigValues)   -> @Mod 构造期注册配
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.1"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.2"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.1"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.2"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.1"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.2"
 }
 
 // Fabric 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.1"
+    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.2"
 }
 ```
 
@@ -157,7 +157,7 @@ dependencies {
 |---|---|
 | NeoForge 1.21.1 / 26.1.2 | `neoforge.mods.toml`：`type="required"`、`ordering="AFTER"`、`side="BOTH"`；省略 `versionRange`，加载器只判存在 |
 | Forge 1.20.1 | `mods.toml`：`mandatory=true`、`versionRange="*"`、`ordering="AFTER"`、`side="BOTH"`。省略 `versionRange` 会让必需依赖永远无法满足 |
-| Fabric 1.20.1 | `fabric.mod.json` 的 `depends` 中写 `"starengine": ">=1.1.0-pre.1"` |
+| Fabric 1.20.1 | `fabric.mod.json` 的 `depends` 中写 `"starengine": ">=1.1.0-pre.2"` |
 
 示例（NeoForge）：
 
@@ -199,7 +199,7 @@ Forge 侧改用 `mandatory=true` 与 `versionRange="*"`，不写 `type="required
 | 渠道 | 提供 jar | 说明 |
 |---|---|---|
 | GitHub Release | 否 | 只有源码归档；CI 会删除任何 jar 附件 |
-| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | 是 | `1.1.0-pre.1+neoforge_1.21.1`、`1.1.0-pre.1+forge_1.20.1` |
+| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | 是 | `1.1.0-pre.2+neoforge_1.21.1`、`1.1.0-pre.2+forge_1.20.1` |
 | [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | 是 | 本批上架 |
 
 消费方（Astral Dice）的 JarJar 状态，自 2026-10-20 起：
@@ -229,7 +229,7 @@ GitHub Release 只提供源码。CI 会构建全部平台作为编译校验，�
 | push 到 `main` 且版本号为正式版 | 自动打 tag（tag = 基础版本号，如 `1.0.0`，无 `v` 前缀、无 `+加载器` 后缀） |
 | push tag `/^[0-9]/` | 创建或更新 GitHub Release：无附件（只有源码归档）；发现 jar 附件即删除 |
 
-tag 规则比消费方多一道守卫：版本号含 `-`（快照或预发布）时不打 tag。否则 `1.1.0-pre.1` 会被 `%%-*` 截成 `1.1.0`，未定型的构建会被打成正式发布。
+tag 规则比消费方多一道守卫：版本号含 `-`（快照或预发布）时不打 tag。否则 `1.1.0-pre.2` 会被 `%%-*` 截成 `1.1.0`，未定型的构建会被打成正式发布。
 
 **消费方 CI 依赖本库。** Astral Dice 的 `build.yml` 先 checkout 本仓并运行 `./gradlew publishToMavenLocal`，再构建自身，因为本库没有远程 Maven。两者版本必须对齐（消费方 `starengine_version` 与本库 `lib_version`），否则消费方 CI 断在依赖解析。该 checkout 用提交 SHA 钉死（消费方 `build.yml` 的 `ref:` 行），必须指向「四份 `gradle.properties` 版本号 = 消费方 pin」的提交。库每次 bump 都要同步改该行。库提交尚未推送到远端时，消费方 CI 无法检出（本地不受影响）。
 
@@ -300,8 +300,8 @@ fabric-1.20.1/src/main/java/.../starengine/         # 平台专有（10 个文�
 ## 6. 版本与兼容
 
 - **兼容性契约（自 `1.0.0` 起生效，四平台一体适用）**：库版本遵循 semver，同一主版本号内（第一位数字不变，当前为 `1.x`）禁止任何破坏性更新。不得删除或改名任何 public 类型、方法、字段、常量，也不得改变其可见性、签名或既有语义；只允许新增（新类型、新成员、新可选入口）与不改变契约的行为修正。确需破坏性变更时，必须把第一位加一（`1.x` -> `2.x`），并在同一次发布里更新消费方 pin；破坏性变更不允许藏在次版本或补丁位里。
-  契约不写进加载器版本区间。现行声明：NeoForge 两线用 `type="required"` 且省略 `versionRange`（只判存在）；Forge 用 `mandatory=true` 与 `versionRange="*"`；Fabric 用 `depends.starengine = ">=1.1.0-pre.1"`。实际安装版本由消费方的 `starengine_version` 钉死。`1.1.0-pre.1` 是预发布版，不能与 `1.0.x` 原位互换：它带有下方记录的破坏性改名。禁止破坏性变更的规则适用于正式的 `1.x` 版本，不覆盖预发布版的跨代切换。
-- **当前版本 = `1.1.0-pre.1`**，四平台同号。四份 `gradle.properties` 的 `lib_version` 均为该值；`mod_version` 分别追加 `+neoforge_1.21.1`、`+forge_1.20.1`、`+neoforge_26.1.2` 或 `+fabric_1.20.1`。消费方四线的 `starengine_version=1.1.0-pre.1`。`1.0.0` 是首个正式版，由 `1.0.0-SNAPSHOT.16` 规范化而来，库内 Java 源码零改动。**不存在 `1.0.1`**，见下条。
+  契约不写进加载器版本区间。现行声明：NeoForge 两线用 `type="required"` 且省略 `versionRange`（只判存在）；Forge 用 `mandatory=true` 与 `versionRange="*"`；Fabric 用 `depends.starengine = ">=1.1.0-pre.2"`。实际安装版本由消费方的 `starengine_version` 钉死。`1.1.0-pre.2` 是预发布版，不能与 `1.0.x` 原位互换：它带有下方记录的破坏性改名。禁止破坏性变更的规则适用于正式的 `1.x` 版本，不覆盖预发布版的跨代切换。
+- **当前版本 = `1.1.0-pre.2`**，四平台同号。四份 `gradle.properties` 的 `lib_version` 均为该值；`mod_version` 分别追加 `+neoforge_1.21.1`、`+forge_1.20.1`、`+neoforge_26.1.2` 或 `+fabric_1.20.1`。消费方四线的 `starengine_version=1.1.0-pre.2`。`1.0.0` 是首个正式版，由 `1.0.0-SNAPSHOT.16` 规范化而来，库内 Java 源码零改动。**不存在 `1.0.1`**，见下条。
 - **2026-09-22 并入 `1.0.0`：移除 Forge 侧的 Curios 前置**（用户裁决）。本改动原拟作为独立的 `1.0.1` 发版，在推送或发布之前已并入 `1.0.0`，因此 **`1.0.1` 无 tag、无 Release、无产物**。Forge 的 `mods.toml` 删掉 `modId="curios"` 依赖块，该侧依赖降为 `modCompileOnly`。`item/CuriosCompat` 只在编译期需要 Curios，库自身零调用。**四个平台的库 jar 都不声明 Curios 前置。** 调用该 shim 的消费方自己声明 Curios（`astral_dice` 的 1.20.1 侧已声明 `mandatory=true [5,6)`）。这是纯放宽，在 `1.x` 内合法。唯一代价：消费方漏声明却调用该 shim 时，失败形态会从加载器的缺前置报错退化为运行期 `NoClassDefFoundError`。
 - **2026-09-23 并入 `1.0.0`：补齐 `neoforge-26.1.2` 缺失的平台实现**。同样原拟作为独立的 `1.0.1` 发版，后并入 `1.0.0`。首个正式版只在 `forge-1.20.1`（`ForgeEconomyStorage`）与 `neoforge-1.21.1`（`NeoForgeEconomyStorage`）提供钱包账本的平台存储，26.1.2 的 `StarEngineEconomy.isAvailable()` 恒为 `false`（`/starcoin` 不注册、拾取星币不被吸收、余额条恒 0）。**`1.0.1` 无 tag、无 Release、无产物**；`1.0.0` tag 名称不变，其 Release 说明随本次 push 刷新。
 - **快照系列（`1.0.0-SNAPSHOT.*`）已终止，不受上述契约保护。** 快照之间二进制不兼容（改名前的 `.1`、包名改名后的 `.2`、缺 `ReadyEffect` 且已移除配置模块的 `.3`、仍带后来被删过渡符号的 `.4`、`loaderVersion` 写错导致整个 jar 被 FML 拒载的 `.5`），所以快照时代的消费方必须把区间下界精确到序号。否则宽松区间会接受旧库 jar，分别表现为 `NoClassDefFoundError`、编译期 `找不到符号`，或（`.5`）整个库 jar 被加载器拒载。该历史口径与实测矩阵保留在 §4.2，仅供解读旧 pin；自正式版 `1.0.0` 起，正式 `1.x` pin 不再需要精确到快照序号，预发布 pin 仍会在下界写出具体预发布号。
@@ -314,7 +314,7 @@ fabric-1.20.1/src/main/java/.../starengine/         # 平台专有（10 个文�
 - **变更记录**：`1.0.0-SNAPSHOT.4` 只新增类（`effect/ReadyEffect`），不删类、不改签名。对按 `.4` 编译的消费方，它是加载期必需前置：运行环境里若仍是 `.3` 的库 jar，会在加载期以 `NoClassDefFoundError: com/merlinkitsune/starenginelib/effect/ReadyEffect` 崩溃，所以消费方必须把区间下界抬到 `[1.0.0-SNAPSHOT.4,2.0)`。反向（用 `.3` 编译、环境为 `.4`）保持兼容。
 - **破坏性变更记录**：`1.0.0-SNAPSHOT.3` 完全移除 Cloth Config 前置与库内公共配置模块（`StarEngineCommonConfig` / `StarEngineConfigs` / `LegacyCommonTomlImporter` / `StarEngineConfigScreen`），把 `GameplayConfigValues` 由 13 字段收敛为 6 字段，并把 `GameplayConstants.refresh()` 改为 `applyConfig(GameplayConfigValues)`。事件框架三件套与 `KOMACHI_EXTRA_PLAYS_CAP` 等过渡符号曾暂留，因为当时尚未合并的消费方主线仍在引用。截至 `1.0.0-SNAPSHOT.5`，该 cap 与三件套均已按期删除。消费方需回归自己的 TOML 配置（`ModConfigSpec` / `ForgeConfigSpec`），并在配置加载后推送值快照（见 §3）。`modId`（当时为 `starengine_lib`）未变更，整合包文件名不受影响。
 - **破坏性变更记录**：`1.0.0-SNAPSHOT.2` 将 Java 包名由 `com.merlinkitsune.starengine` 改为 `com.merlinkitsune.starenginelib`（maven group 同步）。消费方所有 `import` 必须改写，且必须把区间下界提到 `[1.0.0-SNAPSHOT.2,...)`。`modId`（当时为 `starengine_lib`）未变更，`mods.toml` 声明与整合包文件名不受影响。
-- **改名记录（2026-10-19，破坏性）**：包名与 maven group `com.merlinkitsune.starenginelib` -> `com.merlinkitsune.starengine`；modId `starengine_lib` -> `starengine`；artifactId 前缀 `starengine_lib-` -> `starengine-`。消费方需改 import、`starengine_version` 与 JarJar 坐标。当前 `1.1.0-pre.1` 线使用新名。
+- **改名记录（2026-10-19，破坏性）**：包名与 maven group `com.merlinkitsune.starenginelib` -> `com.merlinkitsune.starengine`；modId `starengine_lib` -> `starengine`；artifactId 前缀 `starengine_lib-` -> `starengine-`。消费方需改 import、`starengine_version` 与 JarJar 坐标。当前 `1.1.0-pre.2` 线使用新名。
 - 共享源码对 MC API 的使用受每个平台的编译期约束，破坏性变更会在编译期而非运行期暴露。
 
 ---

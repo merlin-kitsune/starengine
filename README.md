@@ -112,10 +112,10 @@ The library once held the config schema in `common` (Cloth Config AutoConfig, wr
 
 | Platform | Coordinate | Published artifact |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.1` | `jar` (Mojmap; no remapping) |
-| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.1` | `reobfJar` (**production SRG jar**) |
-| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.1` | `jar` (Mojmap; no remapping) |
-| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.1` | `remapJar` (**production intermediary jar**) |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.2` | `jar` (Mojmap; no remapping) |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.2` | `reobfJar` (**production SRG jar**) |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.2` | `jar` (Mojmap; no remapping) |
+| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.2` | `remapJar` (**production intermediary jar**) |
 
 The four platforms share the same `lib_version`. On a version bump all four `gradle.properties` files change together; `mod_version` keeps its platform suffix.
 
@@ -129,25 +129,25 @@ The four platforms share the same `lib_version`. On a version bump all four `gra
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.1"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0-pre.2"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.1"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0-pre.2"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.1"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0-pre.2"
 }
 
 // Fabric 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.1"
+    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0-pre.2"
 }
 ```
 
@@ -159,7 +159,7 @@ Dependency declarations in the consumer:
 |---|---|
 | NeoForge 1.21.1 / 26.1.2 | `neoforge.mods.toml`: `type="required"`, `ordering="AFTER"`, `side="BOTH"`; `versionRange` is omitted, so the loader checks presence only |
 | Forge 1.20.1 | `mods.toml`: `mandatory=true`, `versionRange="*"`, `ordering="AFTER"`, `side="BOTH"`. Omitting `versionRange` makes the mandatory dependency unsatisfiable |
-| Fabric 1.20.1 | `fabric.mod.json`: `"starengine": ">=1.1.0-pre.1"` in `depends` |
+| Fabric 1.20.1 | `fabric.mod.json`: `"starengine": ">=1.1.0-pre.2"` in `depends` |
 
 Example (NeoForge):
 
@@ -201,7 +201,7 @@ Distribution channels:
 | Channel | Jar download | Notes |
 |---|---|---|
 | GitHub Releases | no | source archives only; CI deletes any jar asset |
-| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | yes | `1.1.0-pre.1+neoforge_1.21.1`, `1.1.0-pre.1+forge_1.20.1` |
+| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | yes | `1.1.0-pre.2+neoforge_1.21.1`, `1.1.0-pre.2+forge_1.20.1` |
 | [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | yes | project listed in this batch |
 
 JarJar status in the consumer (Astral Dice), from 2026-10-20:
@@ -231,7 +231,7 @@ The repository is hosted at <https://github.com/merlin-kitsune/StarEngine>. The 
 | push to `main` with a final version number | tag automatically (tag = the base version, e.g. `1.0.0`, no `v` prefix, no `+loader` suffix) |
 | push a tag matching `/^[0-9]/` | create or update the GitHub Release: no assets (source archives only); existing jar assets are deleted |
 
-The tag rule has one guard compared with the consumer: a version containing `-` (a snapshot or pre-release) is not tagged. Without it, `1.1.0-pre.1` would be truncated by `%%-*` to `1.1.0` and an unfinalised build would be tagged as a release.
+The tag rule has one guard compared with the consumer: a version containing `-` (a snapshot or pre-release) is not tagged. Without it, `1.1.0-pre.2` would be truncated by `%%-*` to `1.1.0` and an unfinalised build would be tagged as a release.
 
 **The consumer's CI depends on this library.** Astral Dice's `build.yml` checks this repository out and runs `./gradlew publishToMavenLocal` before building itself, because the library has no remote Maven. Both versions must match (consumer `starengine_version` and library `lib_version`); otherwise the consumer's CI fails at dependency resolution. The checkout is pinned by commit SHA in the consumer's `build.yml` `ref:` line and must point at the commit whose four `gradle.properties` files carry the consumer's pin. Every library bump must update that line. Until the library commit is pushed, the consumer's CI cannot check it out (local builds are unaffected).
 
@@ -302,8 +302,8 @@ fabric-1.20.1/src/main/java/.../starengine/         # platform-specific (10 file
 ## 6. Versions and compatibility
 
 - **Compatibility contract (in force since `1.0.0`, applies to all four platforms)**: the library version follows semver, and within one major version (first digit unchanged; currently `1.x`) any breaking change is forbidden. No public type, method, field or constant may be deleted or renamed, and its visibility, signature or existing semantics may not change. Only additions (new types, new members, new optional entry points) and behaviour fixes that do not alter the contract are allowed. When a breaking change is required, the first digit must be incremented (`1.x` -> `2.x`) and the consumer's pin updated in the same release; breaking changes are not allowed in a minor or patch position.
-  The contract is not encoded as a loader version range. Current declarations: the NeoForge lines use `type="required"` without `versionRange` (presence check); Forge uses `mandatory=true` with `versionRange="*"`; Fabric uses `depends.starengine = ">=1.1.0-pre.1"`. The installed version is pinned by the consumer's `starengine_version`. `1.1.0-pre.1` is a pre-release and is not a drop-in replacement for `1.0.x`: it carries the breaking rename recorded below. The no-breaking rule covers final `1.x` releases, not pre-release transitions.
-- **Current version = `1.1.0-pre.1`** on all four platforms. The four `gradle.properties` files carry it as `lib_version`; `mod_version` appends `+neoforge_1.21.1`, `+forge_1.20.1`, `+neoforge_26.1.2` or `+fabric_1.20.1`. The consumer's four lines pin `starengine_version=1.1.0-pre.1`. `1.0.0` was the first final release, normalised from `1.0.0-SNAPSHOT.16` with zero Java source changes. **There is no `1.0.1`**; see the next bullet.
+  The contract is not encoded as a loader version range. Current declarations: the NeoForge lines use `type="required"` without `versionRange` (presence check); Forge uses `mandatory=true` with `versionRange="*"`; Fabric uses `depends.starengine = ">=1.1.0-pre.2"`. The installed version is pinned by the consumer's `starengine_version`. `1.1.0-pre.2` is a pre-release and is not a drop-in replacement for `1.0.x`: it carries the breaking rename recorded below. The no-breaking rule covers final `1.x` releases, not pre-release transitions.
+- **Current version = `1.1.0-pre.2`** on all four platforms. The four `gradle.properties` files carry it as `lib_version`; `mod_version` appends `+neoforge_1.21.1`, `+forge_1.20.1`, `+neoforge_26.1.2` or `+fabric_1.20.1`. The consumer's four lines pin `starengine_version=1.1.0-pre.2`. `1.0.0` was the first final release, normalised from `1.0.0-SNAPSHOT.16` with zero Java source changes. **There is no `1.0.1`**; see the next bullet.
 - **Merged into `1.0.0` (2026-09-22): the Curios prerequisite is removed on the Forge side** (user decision). The change was briefly prepared as a separate `1.0.1` release and then folded back into `1.0.0` before it was pushed or published, so **`1.0.1` has no tag, no Release and no artefact**. The Forge `mods.toml` drops the `modId="curios"` dependency block, and that side's dependency becomes `modCompileOnly`. `item/CuriosCompat` needs Curios at compile time only, and the library itself never calls it. **None of the four platform jars declares Curios as a prerequisite.** A consumer that calls that shim declares Curios itself (`astral_dice`'s 1.20.1 side already declares `mandatory=true [5,6)`). This is a pure relaxation, so it is legal within `1.x`. The only cost: if a consumer forgets to declare Curios yet calls the shim, the failure degrades from a loader-level missing dependency error to a runtime `NoClassDefFoundError`.
 - **Merged into `1.0.0` (2026-09-23): the missing platform implementation on the `neoforge-26.1.2` line**. This too was briefly prepared as a separate `1.0.1` release and folded back into `1.0.0`. The first stable release shipped the wallet ledger's platform storage only on `forge-1.20.1` (`ForgeEconomyStorage`) and `neoforge-1.21.1` (`NeoForgeEconomyStorage`), so on 26.1.2 `StarEngineEconomy.isAvailable()` stayed `false` (no `/starcoin`, picked-up coins not absorbed, balance bar always 0). **`1.0.1` has no tag, no Release and no artefact**; the `1.0.0` tag keeps its name and its Release notes are refreshed by this push.
 - **The snapshot series (`1.0.0-SNAPSHOT.*`) is terminated and not covered by the contract above.** Snapshots were not binary compatible with each other (`.1` before the package rename, `.2` after it, `.3` missing `ReadyEffect` and with the config module removed, `.4` still carrying the transitional symbols deleted later, `.5` whose wrong `loaderVersion` got the whole jar rejected by FML), which is why consumers in the snapshot era had to pin the range lower bound to the exact number. Otherwise an older library jar was accepted by the loose range and produced `NoClassDefFoundError`, a compile-time `cannot find symbol`, or (`.5`) the loader rejecting the whole library jar. That historical wording and the measurement matrix are kept in §4.2 to interpret old pins; since the final `1.0.0` release, final `1.x` pins no longer need the exact snapshot number, while pre-release pins name the pre-release in the lower bound.
@@ -316,7 +316,7 @@ fabric-1.20.1/src/main/java/.../starengine/         # platform-specific (10 file
 - **Change record**: `1.0.0-SNAPSHOT.4` only added a class (`effect/ReadyEffect`); it deleted no class and changed no signature. For a consumer compiled against `.4` it is a load-time required prerequisite: if the runtime still holds the `.3` library jar, it crashes at load with `NoClassDefFoundError: com/merlinkitsune/starenginelib/effect/ReadyEffect`, so the consumer had to raise the range lower bound to `[1.0.0-SNAPSHOT.4,2.0)`. The reverse (compiled against `.3`, running `.4`) stays compatible.
 - **Breaking change record**: `1.0.0-SNAPSHOT.3` removed the Cloth Config prerequisite and the library's public config module entirely (`StarEngineCommonConfig` / `StarEngineConfigs` / `LegacyCommonTomlImporter` / `StarEngineConfigScreen`), narrowed `GameplayConfigValues` from 13 fields to 6, and changed `GameplayConstants.refresh()` into `applyConfig(GameplayConfigValues)`. The event framework trio and transitional symbols such as `KOMACHI_EXTRA_PLAYS_CAP` were kept temporarily because the not-yet-merged consumer mainline still referenced them. As of `1.0.0-SNAPSHOT.5` both the cap and the trio had been deleted on schedule. Consumers must return to their own TOML configuration (`ModConfigSpec` / `ForgeConfigSpec`) and push the value snapshot after the config loads (see §3). The `modId` (`starengine_lib` at the time) did not change, so modpack file names were unaffected.
 - **Breaking change record**: `1.0.0-SNAPSHOT.2` changed the Java package from `com.merlinkitsune.starengine` to `com.merlinkitsune.starenginelib` (the Maven group followed). Every consumer import had to be rewritten, and the range lower bound had to be raised to `[1.0.0-SNAPSHOT.2,...)`. The `modId` (`starengine_lib` at the time) did not change, so `mods.toml` declarations and modpack file names were unaffected.
-- **Rename record (2026-10-19, breaking)**: package and Maven group `com.merlinkitsune.starenginelib` -> `com.merlinkitsune.starengine`; modId `starengine_lib` -> `starengine`; artifact prefix `starengine_lib-` -> `starengine-`. Consumers update imports, `starengine_version` and JarJar coordinates. The current `1.1.0-pre.1` line uses the new names.
+- **Rename record (2026-10-19, breaking)**: package and Maven group `com.merlinkitsune.starenginelib` -> `com.merlinkitsune.starengine`; modId `starengine_lib` -> `starengine`; artifact prefix `starengine_lib-` -> `starengine-`. Consumers update imports, `starengine_version` and JarJar coordinates. The current `1.1.0-pre.2` line uses the new names.
 - The shared source's use of MC APIs is constrained at compile time on every platform, so breaking changes surface at compile time rather than at runtime.
 
 ---
