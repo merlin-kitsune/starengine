@@ -321,4 +321,6 @@ fabric-1.20.1/src/main/java/.../starengine/         # 平台专有（10 个文�
 
 ## 7. 许可
 
-MIT License，见 [LICENSE](LICENSE)。
+源码 **GPL-3.0-only**（仅第 3 版，不是 “any later version”），见 [LICENSE](LICENSE)（GPL 正文之后是〈Project licensing notes〉说明块）。
+
+`1.0.0` 到 `1.0.12` 的全部发布，以及已分发的 `1.1.0-pre.1` / `1.1.0-pre.2` 构建，**仍为 MIT**，该授权不可撤回，MIT 原文见对应发布 tag 的 `LICENSE`；工作树内不再单独保留 MIT 文件。

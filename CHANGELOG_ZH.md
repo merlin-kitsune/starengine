@@ -148,6 +148,14 @@
   本次补齐。⚠️ 按本线 AGENTS §1「每提交一版」约定，comment-only 提交同样 bump：`2.0.0-SNAPSHOT.5`
   → **`2.0.0-SNAPSHOT.6`**。
 
+### 许可
+
+- **许可协议改为 GPL-3.0-only（2026-10-23 用户裁决）**：源码许可由 MIT 换成 GNU GPL v3（仅第 3 版，不是 
+  “any later version”）。`LICENSE` 换成 GPL-3.0 全文 + 末尾〈Project licensing notes〉三节（源码 / 历史版本 / 
+  第三方），四平台 `mod_license` 与 `fabric.mod.json` 的 `license` 同步改为 `GPL-3.0-only`。**`1.0.0`–`1.0.12` 
+  的全部发布与已分发的 `1.1.0-pre.1` / `1.1.0-pre.2` 构建仍为 MIT**，该授权不可撤回，MIT 原文见对应发布 tag 的 
+  `LICENSE`；工作树内不再单独保留 MIT 文件。
+
 ## 未发布（2.0.0-SNAPSHOT.2）
 
 ### 战斗

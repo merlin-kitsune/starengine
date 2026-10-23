@@ -8,7 +8,7 @@
     "Merlin Kitsune"
   ],
   "contact": {},
-  "license": "MIT License",
+  "license": "GPL-3.0-only",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {

@@ -178,6 +178,16 @@
   AGENTS §1 ("one bump per commit", no exception) a comment-only commit still bumps: `2.0.0-SNAPSHOT.5`
   -> **`2.0.0-SNAPSHOT.6`**.
 
+### Licensing
+
+- **License changed to GPL-3.0-only (2026-10-23)**: source licensing moves from MIT to the GNU GPL v3 
+  (version 3 only, not "any later version"). `LICENSE` now carries the full GPL-3.0 text followed by a 
+  "Project licensing notes" block (source / legacy releases / third party), and the four platforms' 
+  `mod_license` plus `fabric.mod.json`'s `license` field read `GPL-3.0-only`. Every release from `1.0.0` 
+  through `1.0.12` and the already distributed `1.1.0-pre.1` / `1.1.0-pre.2` builds stay under MIT; that 
+  grant is irrevocable, the MIT text is the `LICENSE` file at the corresponding release tag, and the 
+  working tree no longer ships a separate MIT file.
+
 ## Unreleased (2.0.0-SNAPSHOT.2)
 
 ### Combat

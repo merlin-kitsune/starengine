@@ -323,4 +323,6 @@ fabric-1.20.1/src/main/java/.../starengine/         # platform-specific (10 file
 
 ## 7. License
 
-MIT License, see [LICENSE](LICENSE).
+**GPL-3.0-only** (version 3 only, not "any later version") for the source code - see [LICENSE](LICENSE), whose GPL body is followed by a short "Project licensing notes" block.
+
+Every release from `1.0.0` through `1.0.12`, plus the already distributed `1.1.0-pre.1` / `1.1.0-pre.2` builds, remains under the **MIT License**; that grant is irrevocable, and the MIT text is the `LICENSE` file at the corresponding release tag. The working tree no longer ships a separate MIT file.
