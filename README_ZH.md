@@ -149,7 +149,7 @@ dependencies {
 }
 ```
 
-本库在开发期发布到 **mavenLocal**，没有远程 Maven。消费方 clone 本仓并运行 `./gradlew publishToMavenLocal`（CI 场景见 §4.4）。玩家从 Modrinth 或 CurseForge 下载发行 jar（§4.3）。
+本库在开发期发布到 **mavenLocal**，没有远程 Maven。消费方 clone 本仓并运行 `./gradlew publishToMavenLocal`（CI 场景见 §4.4）。玩家从 CurseForge 下载发行 jar（§4.3）。
 
 消费方的依赖声明：
 
@@ -199,8 +199,7 @@ Forge 侧改用 `mandatory=true` 与 `versionRange="*"`，不写 `type="required
 | 渠道 | 提供 jar | 说明 |
 |---|---|---|
 | GitHub Release | 否 | 只有源码归档；CI 会删除任何 jar 附件 |
-| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | 是 | `1.1.0-pre.2+neoforge_1.21.1`、`1.1.0-pre.2+forge_1.20.1` |
-| [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | 是 | 本批上架 |
+| [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | 是 | **唯一商店**；Modrinth 发布链路已于 2026-10-23 永久移除 |
 
 消费方（Astral Dice）的 JarJar 状态，自 2026-10-20 起：
 
@@ -219,7 +218,7 @@ Forge 侧改用 `mandatory=true` 与 `versionRange="*"`，不写 `type="required
 
 ### 4.4 CI / 自动 Release（GitHub Actions）
 
-GitHub Release 只提供源码。CI 会构建全部平台作为编译校验，但不上传构建产物，也不往 Release 挂 jar；发现 jar 附件即删除。jar 下载见 Modrinth 与 CurseForge（§4.3）。
+GitHub Release 只提供源码。CI 会构建全部平台作为编译校验，但不上传构建产物，也不往 Release 挂 jar；发现 jar 附件即删除。jar 下载见 CurseForge（§4.3）。
 
 仓库托管于 <https://github.com/merlin-kitsune/StarEngine>。工作流 `.github/workflows/build.yml` 沿用 Astral Dice 的发布规范：
 

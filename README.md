@@ -151,7 +151,7 @@ dependencies {
 }
 ```
 
-The library is published to **mavenLocal** for development; there is no remote Maven. A consumer clones this repository and runs `./gradlew publishToMavenLocal` (for CI, see §4.4). Players download release jars from Modrinth or CurseForge (§4.3).
+The library is published to **mavenLocal** for development; there is no remote Maven. A consumer clones this repository and runs `./gradlew publishToMavenLocal` (for CI, see §4.4). Players download release jars from CurseForge (§4.3).
 
 Dependency declarations in the consumer:
 
@@ -201,8 +201,7 @@ Distribution channels:
 | Channel | Jar download | Notes |
 |---|---|---|
 | GitHub Releases | no | source archives only; CI deletes any jar asset |
-| [Modrinth `2dIXA5wO`](https://modrinth.com/mod/2dIXA5wO) | yes | `1.1.0-pre.2+neoforge_1.21.1`, `1.1.0-pre.2+forge_1.20.1` |
-| [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | yes | project listed in this batch |
+| [CurseForge `1755415`](https://www.curseforge.com/projects/1755415) | yes | the only store; Modrinth publishing was permanently dropped on 2026-10-23 |
 
 JarJar status in the consumer (Astral Dice), from 2026-10-20:
 
@@ -221,7 +220,7 @@ If you need a jar for A/B testing, build it from source (`./gradlew build`, see 
 
 ### 4.4 CI / automatic releases (GitHub Actions)
 
-GitHub Releases carry source code only. CI builds every platform as a compile check, uploads no build artifact and attaches no jar; any jar asset found on a Release is deleted. Jar downloads are published on Modrinth and CurseForge (§4.3).
+GitHub Releases carry source code only. CI builds every platform as a compile check, uploads no build artifact and attaches no jar; any jar asset found on a Release is deleted. Jar downloads are published on CurseForge (§4.3).
 
 The repository is hosted at <https://github.com/merlin-kitsune/StarEngine>. The workflow `.github/workflows/build.yml` follows the Astral Dice release convention:
 
