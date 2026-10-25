@@ -3,6 +3,22 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
+## 1.1.0
+
+> First final release of the renamed `1.1.0` line. It is the `1.1.0-pre.2` build finalised: **zero Java source changes**
+> since that bump — every following commit is the license switch (`LICENSE` → GPL-3.0-only, 2026-10-23) or documentation.
+> It carries the breaking rename recorded in the `1.1.0-pre.x` entries (group/package `starenginelib` → `starengine`,
+> modId `starengine_lib` → `starengine`), so it is **not** a drop-in replacement for the `1.0.x` line. The
+> `2.0.0`/`2.0.0-SNAPSHOT.x` entries below belong to a separate development line and are unrelated to this release.
+
+### Changed
+
+- Version numbers: all four platforms are `lib_version = 1.1.0` and `mod_version = 1.1.0+neoforge_1.21.1` /
+  `+forge_1.20.1` / `+neoforge_26.1.2` / `+fabric_1.20.1`. Consumers pin `starengine_version = 1.1.0`, and the
+  loader-side dependency range lower bound becomes `[1.1.0,2.0.0)`.
+- Source license is **GPL-3.0-only** from this release on (`LICENSE`); `1.0.0`–`1.0.12` and the already distributed
+  `1.1.0-pre.1` / `1.1.0-pre.2` builds stay under MIT.
+
 ## Unreleased (2.0.0-SNAPSHOT.15)
 
 ### Changed
