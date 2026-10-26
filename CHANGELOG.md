@@ -3,6 +3,18 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
+## 26.4-SNAPSHOT.1
+
+> Development-line (`next` branch) renumbering: from this version the dev line uses `<year>.<quarter>-SNAPSHOT.<n>` (`26.4-SNAPSHOT.1` = 2026 Q4, snapshot 1), replacing the old `2.0.0-SNAPSHOT.<n>` scheme.
+> The content is **identical** to `1.1.0` (zero Java source changes) - only the version numbers and documentation change.
+
+### Changed
+
+- Version numbers: all four platforms are `lib_version = 26.4-SNAPSHOT.1` and `mod_version = 26.4-SNAPSHOT.1+neoforge_1.21.1` /
+  `+forge_1.20.1` / `+neoforge_26.1.2` / `+fabric_1.20.1`; the `multi-dev-next` consumer pins
+  `starengine_version = 26.4-SNAPSHOT.1`, and its loader-side range upper bound moves from `2.0.0` to `27.0.0`
+  (the major digit is the year, so only a breaking change bumps it to `27.x`).
+
 ## 1.1.0
 
 > First final release of the renamed `1.1.0` line. It is the `1.1.0-pre.2` build finalised: **zero Java source changes**
