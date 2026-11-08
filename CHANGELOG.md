@@ -3,6 +3,20 @@
 > This file contains the English changelog only. Chinese version: [`CHANGELOG_ZH.md`](CHANGELOG_ZH.md).
 > The two files correspond one-to-one by version number: each version appears once in both files, and every change must update both together — never only one side.
 
+## 1.1.1
+
+> Compatibility patch: lowers the Forge 1.20.1 runtime floor from `47.4.10` to `47.1.47` so consumers can run inside
+> packs still pinned to Forge 47.1.x. No source changes on the other platforms.
+
+### Changes
+
+- Versions: all four platforms use `lib_version = 1.1.1`, `mod_version = 1.1.1+neoforge_1.21.1` / `+forge_1.20.1` /
+  `+neoforge_26.1.2` / `+fabric_1.20.1`; consumers pin `starengine_version = 1.1.1`.
+- Forge 1.20.1: `forge_version` moves from `1.20.1-47.4.10` to `1.20.1-47.1.47`, so the derived `modId="forge"`
+  dependency range in `mods.toml` becomes `[47.1.47,48)`; `loaderVersion` stays on the major series `[47,48)`.
+- `platform/LoaderTags`: `ResourceLocation.fromNamespaceAndPath(c, "bosses")` becomes `new ResourceLocation(c, "bosses")`,
+  because the former is a Forge 47.4.x backport that does not exist in 47.1.x (it would raise `NoSuchMethodError`).
+
 ## 1.1.0
 
 > First final release of the renamed `1.1.0` line. It is the `1.1.0-pre.2` build finalised: **zero Java source changes**

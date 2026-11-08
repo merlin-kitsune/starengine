@@ -22,7 +22,7 @@ public final class LoaderTags {
     /** 备用:直接按 {@code c:bosses} 构造(当平台 Tags 未提供该常量时使用) */
     public static final TagKey<EntityType<?>> BOSSES_RAW =
             TagKey.create(Registries.ENTITY_TYPE,
-                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(COMMON_NAMESPACE, "bosses"));
+                    new net.minecraft.resources.ResourceLocation(COMMON_NAMESPACE, "bosses"));
 
     /**
      * 实体是否为 {@code c:bosses}。

@@ -112,10 +112,10 @@ The library once held the config schema in `common` (Cloth Config AutoConfig, wr
 
 | Platform | Coordinate | Published artifact |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0` | `jar` (Mojmap; no remapping) |
-| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0` | `reobfJar` (**production SRG jar**) |
-| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0` | `jar` (Mojmap; no remapping) |
-| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0` | `remapJar` (**production intermediary jar**) |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.1` | `jar` (Mojmap; no remapping) |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.1` | `reobfJar` (**production SRG jar**) |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.1` | `jar` (Mojmap; no remapping) |
+| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.1` | `remapJar` (**production intermediary jar**) |
 
 The four platforms share the same `lib_version`. On a version bump all four `gradle.properties` files change together; `mod_version` keeps its platform suffix.
 
@@ -129,25 +129,25 @@ The four platforms share the same `lib_version`. On a version bump all four `gra
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.1"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.1"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.1"
 }
 
 // Fabric 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.1"
 }
 ```
 

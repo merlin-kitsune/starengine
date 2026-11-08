@@ -3,6 +3,20 @@
 > 本文件仅收录中文更新日志；英文版见 [`CHANGELOG.md`](CHANGELOG.md)。
 > 两个文件按版本号一一对应：同一版本号在两边各出现一次，每次改动必须同时更新中英两份，禁止只改一侧。
 
+## 1.1.1
+
+> 兼容性补丁版：把 Forge 1.20.1 侧的可运行下限从 `47.4.10` 下探到 `47.1.47`，以便消费方在仍停留于
+> Forge 47.1.x 的整合包里运行。其余平台无源码变更。
+
+### 变更
+
+- 版本号：四平台统一 `lib_version = 1.1.1`、`mod_version = 1.1.1+neoforge_1.21.1` / `+forge_1.20.1` /
+  `+neoforge_26.1.2` / `+fabric_1.20.1`；消费方 `starengine_version` 钉 `1.1.1`。
+- Forge 1.20.1：`forge_version` 由 `1.20.1-47.4.10` 改为 `1.20.1-47.1.47`，`mods.toml` 里由它派生的
+  `modId="forge"` 依赖区间随之从 `[47.4.10,48)` 变为 `[47.1.47,48)`；`loaderVersion` 仍为主系列 `[47,48)`。
+- `platform/LoaderTags`：`ResourceLocation.fromNamespaceAndPath(c, "bosses")` 改为 `new ResourceLocation(c, "bosses")`
+  —— 前者是 Forge 47.4.x 对 1.20.1 的回移补丁，47.1.x 不存在（不改会在类加载/使用时 `NoSuchMethodError`）。
+
 ## 1.1.0
 
 > 改名后 `1.1.0` 线的首个正式版，即 `1.1.0-pre.2` 的定版：该次 bump 之后**库内 Java 源码零改动** ——

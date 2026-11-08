@@ -110,10 +110,10 @@ GameplayConstants.applyConfig(GameplayConfigValues)   -> @Mod 构造期注册配
 
 | 平台 | 坐标 | 发布产物 |
 |---|---|---|
-| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0` | `jar`（Mojmap，无需重映射） |
-| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0` | `reobfJar`（**生产 SRG jar**） |
-| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0` | `jar`（Mojmap，无需重映射） |
-| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0` | `remapJar`（**生产 intermediary jar**） |
+| NeoForge 1.21.1 | `com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.1` | `jar`（Mojmap，无需重映射） |
+| Forge 1.20.1 | `com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.1` | `reobfJar`（**生产 SRG jar**） |
+| NeoForge 26.1.2 | `com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.1` | `jar`（Mojmap，无需重映射） |
+| Fabric 1.20.1 | `com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.1` | `remapJar`（**生产 intermediary jar**） |
 
 四平台共用同一个 `lib_version`。升版时四份 `gradle.properties` 一起改；`mod_version` 保留各自的平台后缀。
 
@@ -127,25 +127,25 @@ GameplayConstants.applyConfig(GameplayConfigValues)   -> @Mod 构造期注册配
 // NeoForge 1.21.1
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-1.21.1:1.1.1"
 }
 
 // Forge 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-forge-1.20.1:1.1.1"
 }
 
 // NeoForge 26.1.2
 repositories { mavenLocal() }
 dependencies {
-    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.0"
+    implementation "com.merlinkitsune.starengine:starengine-neoforge-26.1.2:1.1.1"
 }
 
 // Fabric 1.20.1
 repositories { mavenLocal() }
 dependencies {
-    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.0"
+    modImplementation "com.merlinkitsune.starengine:starengine-fabric-1.20.1:1.1.1"
 }
 ```
 
