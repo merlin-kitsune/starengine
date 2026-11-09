@@ -203,7 +203,7 @@ jobs:
         #   ① main 分支 push 且**本次新建了 tag** ⇒ 首发上传;
         #   ② workflow_dispatch + cf_apply=true ⇒ 显式补传/重发;
         #   ③ 其它情况(含 tag push 复用已存在 tag)⇒ 整步跳过 —— 上传 API 无查重,重跑必叠重复。
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.tag.outputs.created == '1') || (github.event_name == 'workflow_dispatch' && github.event.inputs.cf_apply == 'true')
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.tag.outputs.created == '1') || github.event_name == 'workflow_dispatch'
         env:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
         run: |
@@ -225,4 +225,10 @@ jobs:
             JARS+=("--jar" "$JAR")
           done
           # releaseType 由版本号自动派生(-alpha/-beta/-rc/-pre,无后缀=release);库无硬前置 ⇒ 不带 relations。
-          python3 tools/curseforge_upload.py push --apply "${JARS[@]}"
+          # 手动 dispatch 且未勾 cf_apply ⇒ 只做 dry-run:验证接线(secret/产物路径/解析)而不产生重复文件。
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.cf_apply }}" != "true" ]]; then
+            echo "CF_DRY_RUN: workflow_dispatch 未勾 cf_apply ⇒ 只规划,不上传"
+            python3 tools/curseforge_upload.py push --dry-run "${JARS[@]}"
+          else
+            python3 tools/curseforge_upload.py push --apply "${JARS[@]}"
+          fi
