@@ -1,0 +1,52 @@
+{
+ "_comment": "CurseForge 项目绑定（StarEngine 前置库）。凭据**不在此文件** —— 见 .curseforge/token（本地、已 gitignore）或环境变量 CURSEFORGE_TOKEN（CI secret）。",
+ "projectId": 1755415,
+ "slug": "starengine",
+ "gameId": 432,
+ "site": "minecraft",
+ "_siteNote": "上传/版本 API 的站点域固定为 minecraft.curseforge.com；换成 www. 会拿到另一个游戏的版本表。",
+ "apiBase": "https://minecraft.curseforge.com/api",
+ "_jarNote": "产物命名 starengine-<平台>-<版本>.jar（平台含 MC 版本，如 neoforge-1.21.1）。工具 tools/curseforge_upload.py 的 LIB_JAR_RE 直接解析这个命名，加载器/MC/版本一律从文件名取，不需要在此登记。",
+ "_lineNote": "lines 只用于 loader+mc 唯一匹配（find_line）；库的 mods.toml 不要求任何硬前置，故 relations 全部为空数组。",
+ "_channelNote": "releaseType 由版本号自动派生：-alpha ⇒ alpha、-beta/-rc/-pre ⇒ beta、无后缀 ⇒ release。1.1.1 无后缀 ⇒ release。",
+ "_policyNote": "2026-11-02 用户裁决：四线（neoforge-1.21.1 / forge-1.20.1 / neoforge-26.1.2 / fabric-1.20.1）全部改为独立外部前置、库不再内嵌 ⇒ 每个平台 jar 都必须发布到本项目，消费方 astral_dice 以 requiredDependency 引用。",
+ "lines": [
+  {
+   "key": "neoforge_1.21.1",
+   "loader": "neoforge",
+   "mc": "1.21.1",
+   "channel": "release",
+   "jar": "neoforge-1.21.1/build/libs/starengine-neoforge-1.21.1-*.jar",
+   "relations": []
+  },
+  {
+   "key": "forge_1.20.1",
+   "loader": "forge",
+   "mc": "1.20.1",
+   "channel": "release",
+   "jar": "forge-1.20.1/build/libs/starengine-forge-1.20.1-*.jar",
+   "relations": []
+  },
+  {
+   "key": "neoforge_26.1.2",
+   "loader": "neoforge",
+   "mc": "26.1.2",
+   "channel": "release",
+   "jar": "neoforge-26.1.2/build/libs/starengine-neoforge-26.1.2-*.jar",
+   "relations": []
+  },
+  {
+   "key": "fabric_1.20.1",
+   "loader": "fabric",
+   "mc": "1.20.1",
+   "channel": "release",
+   "jar": "fabric-1.20.1/build/libs/starengine-fabric-1.20.1-*.jar",
+   "relations": []
+  }
+ ],
+ "lib": {
+  "projectId": 1755415,
+  "slug": "starengine",
+  "_note": "本仓即库项目本体，lib 段与顶层同值（脚本对 starengine-*.jar 会自动落到这里）。"
+ }
+}

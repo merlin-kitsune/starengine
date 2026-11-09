@@ -36,3 +36,12 @@ tools/
 temp/
 .workbuddy/
 build*/
+
+# CurseForge 凭据/缓存(上传脚本本地用;CI 走 secret)
+.curseforge/
+
+# CI 必须随仓提供:CurseForge 上传脚本 + 项目绑定(其余 tools/ 仍是本地脚本,不入库)
+!tools/
+tools/*
+!tools/curseforge.json
+!tools/curseforge_upload.py
